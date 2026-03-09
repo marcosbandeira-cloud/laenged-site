@@ -30,6 +30,7 @@
         .auth-box {
             background: var(--branco); padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             width: 100%; max-width: 400px; text-align: center;
+            max-height: 90vh; overflow-y: auto; /* Adicionado para telas menores se o form for longo */
         }
         .auth-box img { max-width: 180px; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; text-align: left; }
@@ -42,8 +43,7 @@
         .auth-links a { color: var(--azul-corp); text-decoration: none; font-weight: 600; cursor: pointer;}
         .auth-links a:hover { text-decoration: underline; }
 
-        #registro-box { display: none; }
-        #verificacao-box { display: none; } /* Oculto por padrão */
+        #registro-box, #verificacao-box, #recuperar-solicitar-box, #recuperar-redefinir-box { display: none; }
 
         /* ================= DASHBOARD ================= */
         #dashboard-screen { display: none; }
@@ -114,6 +114,10 @@
             
             <button class="btn-auth" id="btn-fazer-login" onclick="fazerLogin()">Entrar no Sistema</button>
             
+            <div style="margin-top: 15px; text-align: right;">
+                <a onclick="alternarTelaAuth('recuperar-solicitar')" style="font-size: 13px; color: var(--azul-corp); cursor: pointer; text-decoration: underline;">Esqueceu sua senha?</a>
+            </div>
+
             <div class="auth-links">
                 <p>Ainda não tem conta? <a onclick="alternarTelaAuth('registro')">Testar Grátis por 5 Dias</a></p>
             </div>
@@ -135,6 +139,10 @@
             <div class="form-group">
                 <label>Criar uma Senha</label>
                 <input type="password" id="reg-senha" placeholder="Mínimo 6 caracteres">
+            </div>
+            <div class="form-group">
+                <label>Confirmar Senha</label>
+                <input type="password" id="reg-senha-confirma" placeholder="Repita sua senha">
             </div>
             
             <button class="btn-auth" id="btn-fazer-registro" onclick="fazerRegistro()">Criar Conta e Iniciar Teste</button>
@@ -158,6 +166,48 @@
             
             <div class="auth-links">
                 <p>Não recebeu? <a onclick="alternarTelaAuth('registro')">Tentar novamente</a></p>
+            </div>
+        </div>
+
+        <div id="recuperar-solicitar-box" class="auth-box">
+            <img src="logo.png" alt="LAENGED Logo">
+            <h2 style="margin-bottom: 10px; font-size: 20px; color: var(--escuro);">Recuperar Senha</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Digite o e-mail cadastrado. Enviaremos um código para redefinir sua senha.</p>
+            
+            <div class="form-group">
+                <label>E-mail Cadastrado</label>
+                <input type="email" id="recuperar-email" placeholder="seu@email.com">
+            </div>
+            
+            <button class="btn-auth" id="btn-solicitar-recuperacao" onclick="solicitarRecuperacao()">Enviar Código</button>
+            
+            <div class="auth-links">
+                <p><a onclick="alternarTelaAuth('login')">⬅ Voltar ao Login</a></p>
+            </div>
+        </div>
+
+        <div id="recuperar-redefinir-box" class="auth-box">
+            <img src="logo.png" alt="LAENGED Logo">
+            <h2 style="margin-bottom: 10px; font-size: 20px; color: var(--escuro);">Criar Nova Senha</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Digite o código de 6 dígitos recebido e sua nova senha.</p>
+            
+            <div class="form-group">
+                <label>Código de Recuperação</label>
+                <input type="text" id="recuperar-codigo" placeholder="Ex: 123456" style="text-align: center; font-size: 20px; letter-spacing: 5px; font-weight: bold;">
+            </div>
+            <div class="form-group">
+                <label>Nova Senha</label>
+                <input type="password" id="recuperar-nova-senha" placeholder="Mínimo 6 caracteres">
+            </div>
+            <div class="form-group">
+                <label>Confirmar Nova Senha</label>
+                <input type="password" id="recuperar-nova-senha-confirma" placeholder="Repita a nova senha">
+            </div>
+            
+            <button class="btn-auth" id="btn-redefinir-senha" onclick="redefinirSenha()">Redefinir e Entrar</button>
+            
+            <div class="auth-links">
+                <p><a onclick="alternarTelaAuth('login')">⬅ Cancelar e voltar</a></p>
             </div>
         </div>
 
@@ -266,11 +316,17 @@
             document.getElementById('login-box').style.display = 'none';
             document.getElementById('registro-box').style.display = 'none';
             document.getElementById('verificacao-box').style.display = 'none';
+            document.getElementById('recuperar-solicitar-box').style.display = 'none';
+            document.getElementById('recuperar-redefinir-box').style.display = 'none';
 
             if(tela === 'registro') {
                 document.getElementById('registro-box').style.display = 'block';
             } else if(tela === 'verificacao') {
                 document.getElementById('verificacao-box').style.display = 'block';
+            } else if(tela === 'recuperar-solicitar') {
+                document.getElementById('recuperar-solicitar-box').style.display = 'block';
+            } else if(tela === 'recuperar-redefinir') {
+                document.getElementById('recuperar-redefinir-box').style.display = 'block';
             } else {
                 document.getElementById('login-box').style.display = 'block';
             }
@@ -317,7 +373,7 @@
                     abrirDashboard();
                 } else if (data.status === "PENDENTE") {
                     alert("⚠️ " + data.mensagem);
-                    document.getElementById('reg-email').value = email; // Preenche para verificação
+                    document.getElementById('reg-email').value = email;
                     alternarTelaAuth('verificacao');
                 } else {
                     alert("❌ " + data.mensagem);
@@ -333,7 +389,12 @@
             const empresa = document.getElementById('reg-empresa').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const senha = document.getElementById('reg-senha').value.trim();
-            if(!empresa || !email || !senha) return alert("Preencha todos os campos.");
+            const senhaConfirma = document.getElementById('reg-senha-confirma').value.trim();
+
+            if(!empresa || !email || !senha || !senhaConfirma) return alert("Preencha todos os campos.");
+            
+            // VERIFICA SE AS SENHAS SÃO IGUAIS ANTES DE ENVIAR PRA API
+            if(senha !== senhaConfirma) return alert("As senhas não coincidem. Por favor, digite senhas iguais nos dois campos.");
 
             document.getElementById('btn-fazer-registro').innerText = "Enviando código para o e-mail...";
             document.getElementById('btn-fazer-registro').disabled = true;
@@ -385,6 +446,69 @@
             finally {
                 document.getElementById('btn-validar-codigo').innerText = "Validar e Acessar";
                 document.getElementById('btn-validar-codigo').disabled = false;
+            }
+        }
+
+        // === API: RECUPERAÇÃO DE SENHA ===
+        async function solicitarRecuperacao() {
+            const email = document.getElementById('recuperar-email').value.trim();
+            if(!email) return alert("Digite o seu e-mail.");
+
+            document.getElementById('btn-solicitar-recuperacao').innerText = "Enviando...";
+            document.getElementById('btn-solicitar-recuperacao').disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/recuperar-senha/solicitar`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                const data = await res.json();
+
+                if (data.status === "SUCESSO") {
+                    alert("📨 " + data.mensagem);
+                    alternarTelaAuth('recuperar-redefinir');
+                } else {
+                    alert("❌ " + data.mensagem);
+                }
+            } catch (e) { alert("Falha de conexão."); } 
+            finally {
+                document.getElementById('btn-solicitar-recuperacao').innerText = "Enviar Código";
+                document.getElementById('btn-solicitar-recuperacao').disabled = false;
+            }
+        }
+
+        async function redefinirSenha() {
+            const email = document.getElementById('recuperar-email').value.trim();
+            const codigo = document.getElementById('recuperar-codigo').value.trim();
+            const novaSenha = document.getElementById('recuperar-nova-senha').value.trim();
+            const novaSenhaConfirma = document.getElementById('recuperar-nova-senha-confirma').value.trim();
+            
+            if(!codigo || !novaSenha || !novaSenhaConfirma) return alert("Preencha o código e a nova senha.");
+            
+            // VERIFICA SE AS NOVAS SENHAS SÃO IGUAIS
+            if(novaSenha !== novaSenhaConfirma) return alert("As senhas digitadas não coincidem. Verifique os campos e tente novamente.");
+
+            document.getElementById('btn-redefinir-senha').innerText = "Salvando...";
+            document.getElementById('btn-redefinir-senha').disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/recuperar-senha/redefinir`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, codigo: codigo, nova_senha: novaSenha })
+                });
+                const data = await res.json();
+
+                if (data.status === "SUCESSO") {
+                    alert("🎉 " + data.mensagem);
+                    alternarTelaAuth('login');
+                    document.getElementById('login-email').value = email; 
+                } else {
+                    alert("❌ " + data.mensagem);
+                }
+            } catch (e) { alert("Falha de conexão."); } 
+            finally {
+                document.getElementById('btn-redefinir-senha').innerText = "Redefinir e Entrar";
+                document.getElementById('btn-redefinir-senha').disabled = false;
             }
         }
 
