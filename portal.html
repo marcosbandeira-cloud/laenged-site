@@ -22,7 +22,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--cinza-claro); color: var(--escuro); }
 
-        /* ================= TELAS DE AUTENTICAÇÃO (LOGIN / REGISTRO) ================= */
+        /* ================= TELAS DE AUTENTICAÇÃO ================= */
         .auth-screen {
             height: 100vh; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, #001f3f 0%, var(--azul-corp) 100%);
@@ -42,9 +42,9 @@
         .auth-links a { color: var(--azul-corp); text-decoration: none; font-weight: 600; cursor: pointer;}
         .auth-links a:hover { text-decoration: underline; }
 
-        #registro-box { display: none; } /* Oculto por padrão */
+        #registro-box { display: none; }
 
-        /* ================= DASHBOARD DO USUÁRIO ================= */
+        /* ================= DASHBOARD ================= */
         #dashboard-screen { display: none; }
         
         .topbar { background: var(--branco); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -59,12 +59,10 @@
         .card { background: var(--branco); border-radius: 8px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--borda); margin-bottom: 30px; }
         .card h2 { font-size: 20px; color: var(--azul-corp); margin-bottom: 20px; border-bottom: 2px solid var(--cinza-claro); padding-bottom: 10px; }
 
-        /* Tabela de Licenças */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--borda); font-size: 14px; }
         th { background: var(--cinza-claro); font-weight: 600; color: var(--escuro); }
         
-        /* Badges de Status */
         .status-ativo { background: var(--verde-sucesso); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
         .status-disponivel { background: var(--azul-info); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
         .status-trial { background: var(--roxo-trial); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
@@ -76,10 +74,19 @@
         .btn-download { background: var(--verde-sucesso); color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 18px; font-weight: bold; display: inline-block; transition: 0.3s;}
         .btn-download:hover { background: #0d650d; transform: translateY(-2px); }
 
+        /* Simulador de Compra e Cupons */
         .simulador-box { background: var(--cinza-claro); padding: 20px; border-radius: 6px; margin-bottom: 20px; }
         .qtd-input { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; margin-top: 10px; margin-bottom: 15px;}
         .preco-destaque { font-size: 28px; font-weight: bold; color: var(--escuro); margin-bottom: 10px; display: block;}
         
+        .cupom-area { display: flex; gap: 10px; margin-top: 15px; }
+        .cupom-input { flex: 1; padding: 10px; border: 1px dashed var(--azul-corp); border-radius: 4px; text-transform: uppercase; font-weight: bold;}
+        .btn-aplicar { background: var(--azul-corp); color: white; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer; font-weight: bold;}
+        .btn-aplicar:hover { background: #00509e; }
+        .resumo-valores { margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px; display: flex; flex-direction: column; gap: 5px; }
+        .linha-valor { display: flex; justify-content: space-between; font-size: 14px; color: #666; }
+        .economia-badge { background: #e6f4ea; color: var(--verde-sucesso); padding: 5px 10px; border-radius: 4px; font-size: 13px; text-align: center; margin-top: 10px; border: 1px solid #c3e6cb;}
+
         .pagamento-botoes { display: flex; flex-direction: column; gap: 10px; }
         .btn-pix { background: #32BCAD; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer;}
         .btn-pix:hover { background: #28968a; }
@@ -96,8 +103,8 @@
             <h2 style="margin-bottom: 20px; font-size: 20px; color: var(--escuro);">Acesso ao Portal</h2>
             
             <div class="form-group">
-                <label>E-mail Corporativo</label>
-                <input type="email" id="login-email" placeholder="engenharia@suaempresa.com.br">
+                <label>E-mail (Corporativo ou Pessoal)</label>
+                <input type="email" id="login-email" placeholder="seu@email.com">
             </div>
             <div class="form-group">
                 <label>Senha</label>
@@ -117,12 +124,12 @@
             <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Ganhe 5 dias de teste grátis com todas as funções liberadas.</p>
             
             <div class="form-group">
-                <label>Nome da Empresa</label>
-                <input type="text" id="reg-empresa" placeholder="Construtora Alpha S.A.">
+                <label>Nome (Empresa ou Pessoal)</label>
+                <input type="text" id="reg-empresa" placeholder="Seu Nome ou Empresa">
             </div>
             <div class="form-group">
-                <label>E-mail Corporativo</label>
-                <input type="email" id="reg-email" placeholder="engenharia@empresa.com.br">
+                <label>E-mail (Corporativo ou Pessoal)</label>
+                <input type="email" id="reg-email" placeholder="seu@email.com">
             </div>
             <div class="form-group">
                 <label>Criar uma Senha</label>
@@ -166,7 +173,7 @@
 
                 <div class="card">
                     <h2>🔑 Minhas Licenças e Dispositivos</h2>
-                    <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Aqui você gerencia o acesso do seu time. Licenças de avaliação (Trial) são travadas no primeiro PC ativado.</p>
+                    <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Selecione licenças abaixo para renová-las por mais um ano (Stacking).</p>
                     
                     <div style="overflow-x: auto;">
                         <table>
@@ -190,22 +197,40 @@
 
             <div class="col-side">
                 <div class="card">
-                    <h2>🛒 Adquirir Assinatura Anual</h2>
-                    <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Assinatura válida por 12 meses. O desconto corporativo é aplicado automaticamente pelo volume.</p>
+                    <h2>🛒 Adquirir / Renovar Licenças</h2>
+                    <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Assinatura válida por 12 meses. O desconto em cascata (volume) é aplicado automaticamente.</p>
                     
                     <div class="simulador-box">
                         <label style="font-weight: bold; font-size: 14px;">Quantidade de Licenças:</label>
-                        <input type="number" id="qtd-licencas" class="qtd-input" value="1" min="1" max="50" onchange="calcularPreco()" onkeyup="calcularPreco()">
+                        <input type="number" id="qtd-licencas" class="qtd-input" value="1" min="1" max="100" onchange="calcularPreco()" onkeyup="calcularPreco()">
                         
-                        <div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                            <span style="font-size: 14px; color: #666;">Valor Total (Anual):</span>
-                            <span class="preco-destaque" id="valor-total">R$ 1.200,00</span>
-                            <span style="font-size: 12px; color: var(--verde-sucesso); font-weight: bold;" id="mensagem-desconto"></span>
+                        <div class="cupom-area">
+                            <input type="text" id="input-cupom" class="cupom-input" placeholder="CUPOM">
+                            <button class="btn-aplicar" onclick="aplicarCupom()">Aplicar</button>
+                        </div>
+
+                        <div class="resumo-valores">
+                            <div class="linha-valor">
+                                <span>Valor Unitário Base:</span>
+                                <span>R$ 420,00</span>
+                            </div>
+                            <div class="linha-valor" style="color: var(--azul-corp); font-weight: bold;">
+                                <span>Valor Unitário Final:</span>
+                                <span id="valor-unitario-display">R$ 420,00</span>
+                            </div>
+                            <div class="linha-valor" style="margin-top: 10px;">
+                                <span style="font-size: 16px; font-weight: bold; color: var(--escuro);">TOTAL (Anual):</span>
+                                <span class="preco-destaque" id="valor-total" style="margin-bottom: 0;">R$ 420,00</span>
+                            </div>
+                        </div>
+                        
+                        <div id="area-economia" style="display: none;">
+                            <div class="economia-badge" id="mensagem-desconto"></div>
                         </div>
                     </div>
 
                     <div class="pagamento-botoes">
-                        <button class="btn-pix">◈ Pagar com PIX (Libera na hora)</button>
+                        <button class="btn-pix" id="btn-pix" onclick="processarPagamentoSimulado()">◈ Pagar com PIX (Nova Compra)</button>
                         <button class="btn-cartao">💳 Cartão de Crédito (Até 12x)</button>
                     </div>
                 </div>
@@ -216,6 +241,7 @@
 
     <script>
         const API_URL = "https://laenged-api.onrender.com";
+        let descontoCupomAtivo = 0; 
 
         // === CONTROLE DE TELAS ===
         function alternarTelaAuth(tela) {
@@ -242,14 +268,12 @@
             document.getElementById('auth-screen').style.display = 'flex';
         }
 
-        // Verifica se já está logado ao carregar a página
         window.onload = () => {
-            if (localStorage.getItem('laenged_empresa_id')) {
-                abrirDashboard();
-            }
+            if (localStorage.getItem('laenged_empresa_id')) abrirDashboard();
+            else calcularPreco(); 
         };
 
-        // === API: LOGIN ===
+        // === API: LOGIN & REGISTRO ===
         async function fazerLogin() {
             const email = document.getElementById('login-email').value.trim();
             const senha = document.getElementById('login-senha').value.trim();
@@ -260,8 +284,7 @@
 
             try {
                 const res = await fetch(`${API_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, senha: senha })
                 });
                 const data = await res.json();
@@ -273,48 +296,44 @@
                 } else {
                     alert("❌ " + data.mensagem);
                 }
-            } catch (e) {
-                alert("Falha de conexão com o servidor.");
-            } finally {
+            } catch (e) { alert("Falha de conexão com o servidor."); } 
+            finally {
                 document.getElementById('btn-fazer-login').innerText = "Entrar no Sistema";
                 document.getElementById('btn-fazer-login').disabled = false;
             }
         }
 
-        // === API: REGISTRO E TRIAL ===
         async function fazerRegistro() {
             const empresa = document.getElementById('reg-empresa').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const senha = document.getElementById('reg-senha').value.trim();
             if(!empresa || !email || !senha) return alert("Preencha todos os campos.");
 
-            document.getElementById('btn-fazer-registro').innerText = "Criando conta e gerando licença...";
+            document.getElementById('btn-fazer-registro').innerText = "Aguarde...";
             document.getElementById('btn-fazer-registro').disabled = true;
 
             try {
                 const res = await fetch(`${API_URL}/auth/registro`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nome_empresa: empresa, email: email, senha: senha })
                 });
                 const data = await res.json();
 
                 if (data.status === "SUCESSO") {
-                    alert("🎉 " + data.mensagem + "\n\nFaça o login agora para acessar sua chave.");
+                    alert("🎉 " + data.mensagem + "\n\nFaça o login agora para acessar sua chave de Teste.");
                     alternarTelaAuth('login');
-                    document.getElementById('login-email').value = email; // Preenche o e-mail pro cara
+                    document.getElementById('login-email').value = email; 
                 } else {
                     alert("❌ " + data.mensagem);
                 }
-            } catch (e) {
-                alert("Falha de conexão com o servidor.");
-            } finally {
-                document.getElementById('btn-fazer-registro').innerText = "Criando Conta e Iniciar Teste";
+            } catch (e) { alert("Falha de conexão com o servidor."); } 
+            finally {
+                document.getElementById('btn-fazer-registro').innerText = "Criar Conta e Iniciar Teste";
                 document.getElementById('btn-fazer-registro').disabled = false;
             }
         }
 
-        // === API: CARREGAR LICENÇAS DO CLIENTE ===
+        // === API: CARREGAR LICENÇAS E INSERIR CHECKBOXES ===
         async function carregarLicencas() {
             const empresa_id = localStorage.getItem('laenged_empresa_id');
             const tabela = document.getElementById("corpo-tabela");
@@ -326,10 +345,7 @@
 
                 if (json.status === "SUCESSO") {
                     tabela.innerHTML = ""; 
-                    if (json.dados.length === 0) {
-                        tabela.innerHTML = "<tr><td colspan='6' style='text-align: center; color: #666;'>Nenhuma licença encontrada.</td></tr>";
-                        return;
-                    }
+                    if (json.dados.length === 0) return tabela.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Nenhuma licença encontrada.</td></tr>";
 
                     json.dados.forEach(licenca => {
                         let isTrial = licenca.tipo === "TRIAL";
@@ -337,21 +353,18 @@
                         
                         let corStatus = licenca.status === "EM_USO" ? "status-ativo" : "status-disponivel";
                         let textoStatus = licenca.status === "EM_USO" ? "Em Uso" : "Livre";
-                        let comp = licenca.pc && licenca.pc !== "Nenhum" ? licenca.pc : "<span style='color: #999;'>Aguardando Vínculo</span>";
+                        let comp = licenca.pc && licenca.pc !== "Nenhum" ? licenca.pc : "-";
                         
-                        // Lógica da trava: Se estiver em uso E FOR TRIAL, esconde o botão de desvincular!
                         let botaoAcao = "-";
                         if (licenca.status === "EM_USO") {
-                            if (isTrial) {
-                                botaoAcao = "<span style='color:#999; font-size:11px;'>Intransferível</span>";
-                            } else {
-                                botaoAcao = `<button class="btn-desvincular" onclick="desvincular('${licenca.chave}')">Desvincular PC</button>`;
-                            }
+                            botaoAcao = isTrial ? "<span style='color:#999; font-size:11px;'>Intransferível</span>" : `<button class="btn-desvincular" onclick="desvincular('${licenca.chave}')">Desvincular</button>`;
                         }
+
+                        let checkbox = isTrial ? `<input type="checkbox" disabled title="Trials não são renováveis">` : `<input type="checkbox" class="chk-renovar" value="${licenca.chave}" onchange="atualizarCarrinho()">`;
 
                         let linha = `
                             <tr>
-                                <td><strong>${licenca.chave}</strong></td>
+                                <td>${checkbox} <strong>${licenca.chave}</strong></td>
                                 <td>${badgeTipo}</td>
                                 <td><span class="${corStatus}">${textoStatus}</span></td>
                                 <td>${comp}</td>
@@ -362,8 +375,71 @@
                         tabela.innerHTML += linha;
                     });
                 }
-            } catch (erro) {
-                tabela.innerHTML = "<tr><td colspan='6' style='text-align: center; color: red;'>Erro ao conectar com o servidor.</td></tr>";
+            } catch (erro) { tabela.innerHTML = "<tr><td colspan='6'>Erro de conexão.</td></tr>"; }
+        }
+
+        // === LÓGICA DE RENOVAÇÃO / COMPRA ===
+        function atualizarCarrinho() {
+            let checkboxes = document.querySelectorAll('.chk-renovar:checked');
+            let inputQtd = document.getElementById('qtd-licencas');
+            
+            if (checkboxes.length > 0) {
+                inputQtd.value = checkboxes.length;
+                inputQtd.disabled = true;
+                document.getElementById('btn-pix').innerText = "🔄 Renovar Selecionadas (PIX)";
+            } else {
+                inputQtd.disabled = false;
+                document.getElementById('btn-pix').innerText = "◈ Pagar com PIX (Nova Compra)";
+            }
+            calcularPreco();
+        }
+
+        // === API: CUPONS ===
+        async function aplicarCupom() {
+            let cupom = document.getElementById('input-cupom').value.toUpperCase().trim();
+            if (!cupom) { descontoCupomAtivo = 0; calcularPreco(); return; }
+
+            try {
+                const res = await fetch(`${API_URL}/cupons/validar/${cupom}`);
+                const data = await res.json();
+
+                if (data.status === "SUCESSO") {
+                    descontoCupomAtivo = data.desconto; 
+                    alert(`✅ Cupom aplicado: ${data.desconto * 100}% de desconto extra!`);
+                } else {
+                    descontoCupomAtivo = 0;
+                    alert("❌ " + data.mensagem);
+                    document.getElementById('input-cupom').value = "";
+                }
+                calcularPreco();
+            } catch(e) { alert("Erro ao validar cupom."); }
+        }
+
+        function calcularPreco() {
+            let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
+            let precoBase = 420.00;
+            let precoUnitario = precoBase;
+
+            if (qtd > 1) {
+                let expoente = qtd > 11 ? 10 : (qtd - 1);
+                precoUnitario = precoBase * Math.pow(0.99, expoente); 
+            }
+
+            let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
+            let valorTotal = qtd * precoComCupom;
+
+            let totalSemDesconto = precoBase * qtd;
+            let economiaReal = totalSemDesconto - valorTotal;
+            let porcentagemEconomia = (economiaReal / totalSemDesconto) * 100;
+
+            document.getElementById('valor-unitario-display').innerText = precoComCupom.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('valor-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            if (economiaReal > 0) {
+                document.getElementById('area-economia').style.display = 'block';
+                document.getElementById('mensagem-desconto').innerHTML = `🔥 Você economizou <b>${economiaReal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b> (${porcentagemEconomia.toFixed(2)}%)`;
+            } else {
+                document.getElementById('area-economia').style.display = 'none';
             }
         }
 
@@ -373,8 +449,7 @@
 
             try {
                 const resposta = await fetch(`${API_URL}/desvincular`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ chave_acesso: chave })
                 });
                 const json = await resposta.json();
@@ -385,24 +460,39 @@
                 } else {
                     alert("❌ Erro: " + json.mensagem);
                 }
-            } catch (erro) {
-                alert("Erro ao tentar falar com o servidor.");
-            }
+            } catch (erro) { alert("Erro ao tentar falar com o servidor."); }
         }
 
-        // --- SIMULADOR DE COMPRAS ---
-        function calcularPreco() {
-            let qtd = document.getElementById('qtd-licencas').value;
-            let precoBase = 1200;
-            let valorTotal = 0;
-            let desconto = "";
+        // === SIMULAR RENOVAÇÃO / COMPRA NO BANCO ===
+        async function processarPagamentoSimulado() {
+            let checkboxes = document.querySelectorAll('.chk-renovar:checked');
+            let empresa_id = localStorage.getItem('laenged_empresa_id');
+            let btn = document.getElementById('btn-pix');
 
-            if (qtd >= 10) { valorTotal = qtd * (precoBase * 0.7); desconto = "Desconto Corporativo de 30% Aplicado!"; }
-            else if (qtd >= 5) { valorTotal = qtd * (precoBase * 0.85); desconto = "Desconto de Equipe de 15% Aplicado!"; }
-            else { valorTotal = qtd * precoBase; }
+            if (checkboxes.length > 0) {
+                let chavesParaRenovar = Array.from(checkboxes).map(chk => chk.value);
+                
+                btn.innerText = "Processando Renovação...";
+                btn.disabled = true;
 
-            document.getElementById('valor-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('mensagem-desconto').innerText = desconto;
+                try {
+                    const res = await fetch(`${API_URL}/webhook/renovar`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ empresa_id: parseInt(empresa_id), chaves: chavesParaRenovar, tempo_dias: 365 })
+                    });
+                    const json = await res.json();
+                    
+                    if(json.status === "SUCESSO") {
+                        alert("🎉 Pagamento Simulado Aprovado! Licenças estendidas por +1 ano.");
+                        checkboxes.forEach(chk => chk.checked = false); // Limpa as caixinhas
+                        atualizarCarrinho(); // Volta o simulador pro estado normal
+                        carregarLicencas(); // Atualiza as novas datas de 2027 na tela
+                    }
+                } catch(e) { alert("Falha na transação."); }
+                finally { btn.disabled = false; }
+            } else {
+                alert("Simulação de nova compra. Aqui o Webhook de pagamento integraria com o Asaas/MercadoPago para criar NOVAS chaves.");
+            }
         }
     </script>
 </body>

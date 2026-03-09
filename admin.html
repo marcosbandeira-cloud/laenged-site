@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>LAENGED - Admin</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f8; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 8px; max-width: 400px; margin: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #d83b01; color: white; border: none; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Gerador de Cupons</h2>
+        <input type="text" id="codigo" placeholder="CÓDIGO (Ex: OFF20)">
+        <input type="number" id="desconto" placeholder="Desconto Ex: 0.15 para 15%">
+        <input type="number" id="limite" placeholder="Limite de usos (Ex: 5)">
+        <input type="date" id="validade">
+        <button onclick="gerarCupom()">Criar Cupom</button>
+    </div>
+
+    <script>
+        async function gerarCupom() {
+            let dados = {
+                codigo: document.getElementById('codigo').value,
+                desconto: parseFloat(document.getElementById('desconto').value),
+                limite: parseInt(document.getElementById('limite').value),
+                validade: document.getElementById('validade').value
+            };
+            const res = await fetch("https://laenged-api.onrender.com/admin/cupons", {
+                method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(dados)
+            });
+            const json = await res.json();
+            alert(json.mensagem);
+        }
+    </script>
+</body>
+</html>
