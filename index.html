@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAENGED Engenharia e Sistemas</title>
+    <style>
+        /* ================= PALETA DE CORES E FONTES ================= */
+        :root {
+            --azul-corp: #0067c0;
+            --laranja-cta: #d83b01;
+            --verde-sucesso: #107c10;
+            --escuro: #333333;
+            --cinza-claro: #f9f9f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        html { scroll-behavior: smooth; }
+        body { color: var(--escuro); background-color: white; line-height: 1.6; }
+
+        /* ================= CABEÇALHO E NAVEGAÇÃO ================= */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed; width: 100%; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 50px;
+        }
+        .logo { display: flex; align-items: center; }
+        nav ul { list-style: none; display: flex; gap: 25px; align-items: center;}
+        nav ul li a { text-decoration: none; color: var(--escuro); font-weight: 600; transition: 0.3s; }
+        nav ul li a:hover { color: var(--laranja-cta); }
+        
+        .btn-portal { background-color: var(--azul-corp); color: white !important; padding: 8px 15px; border-radius: 4px; }
+        .btn-portal:hover { background-color: #00509e; color: white !important; }
+
+        /* ================= SEÇÃO INÍCIO (COM ANIMAÇÃO) ================= */
+        #inicio {
+            height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center;
+            background: linear-gradient(135deg, rgba(0,103,192,0.9) 0%, rgba(51,51,51,0.9) 100%), url('image_5ecf1d.jpg') center/cover;
+            color: white; padding: 0 20px; position: relative; overflow: hidden; margin-top: 60px;
+        }
+        
+        /* Animação de fundo (Malha / Grade se movendo) */
+        .grid-animada {
+            position: absolute; top: 0; left: 0; width: 200%; height: 200%;
+            background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moverGrade 20s linear infinite; z-index: 0;
+        }
+        @keyframes moverGrade { 0% { transform: translateY(0) translateX(0); } 100% { transform: translateY(-50px) translateX(-50px); } }
+
+        .hero-content { position: relative; z-index: 1; max-width: 900px; }
+        .hero-content h1 { font-size: 42px; margin-bottom: 20px; line-height: 1.2; }
+        .hero-content p { font-size: 18px; margin-bottom: 40px; font-weight: 300; }
+        
+        /* Novos Estilos para os Dois Botões no Hero */
+        .hero-botoes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .btn-hero { background-color: var(--laranja-cta); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 5px; transition: 0.3s; }
+        .btn-hero:hover { background-color: #a42600; }
+        
+        .btn-hero-secundario { background-color: transparent; color: white; padding: 13px 28px; text-decoration: none; font-size: 18px; font-weight: bold; border: 2px solid white; border-radius: 5px; transition: 0.3s; }
+        .btn-hero-secundario:hover { background-color: white; color: var(--escuro); }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 32px; }
+            .hero-botoes { flex-direction: column; }
+            .btn-hero, .btn-hero-secundario { width: 100%; }
+        }
+
+        /* ================= SEÇÕES GERAIS ================= */
+        section { padding: 80px 50px; }
+        h2.section-title { font-size: 36px; color: var(--azul-corp); text-align: center; margin-bottom: 50px; }
+        h2.section-title::after { content: ''; display: block; width: 60px; height: 4px; background-color: var(--laranja-cta); margin: 10px auto 0; }
+
+        /* ================= SOLUÇÕES EM ENGENHARIA (Cards) ================= */
+        .solucoes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card { background: white; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-10px); }
+        .card-img { height: 200px; background-color: #e0e0e0; display: flex; align-items: center; justify-content: center; overflow: hidden;}
+        .card-content { padding: 25px; }
+        .card-content h3 { color: var(--azul-corp); margin-bottom: 15px; }
+        .card-content p { font-size: 15px; color: #555; margin-bottom: 15px; }
+
+        /* ================= PORTFÓLIO ================= */
+        .portfolio-lista { display: flex; flex-direction: column; gap: 20px; max-width: 900px; margin: 0 auto;}
+        .projeto-item { background-color: var(--cinza-claro); padding: 20px 30px; border-left: 5px solid var(--azul-corp); border-radius: 0 8px 8px 0; }
+        .projeto-item h4 { color: var(--escuro); font-size: 18px; margin-bottom: 5px; }
+        .projeto-item span { color: var(--laranja-cta); font-weight: bold; font-size: 14px;}
+
+        /* ================= CONTATO ================= */
+        .contato-container { max-width: 600px; margin: 0 auto; background: var(--cinza-claro); padding: 40px; border-radius: 8px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
+        .btn-submit { width: 100%; background-color: var(--verde-sucesso); color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;}
+        .btn-submit:hover { background-color: #0e6a0e; }
+
+        /* Footer */
+        footer { background-color: var(--escuro); color: white; text-align: center; padding: 20px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="Logo LAENGED Engenharia" height="40">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="software.html">LAENGED Batch Pro</a></li>
+                <li><a href="#solucoes">Gestão de Projetos & Engenharia</a></li>
+                <li><a href="#portfolio">Projetos</a></li>
+                <li><a href="#contato">Contato</a></li>
+                <li><a href="portal.html" class="btn-portal">Portal do Cliente</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="inicio">
+        <div class="grid-animada"></div>
+        <div class="hero-content">
+            <h1>Precisão que Transforma: Engenharia e Inovação de Ponta a Ponta.</h1>
+            <p>Otimize seus resultados com nossa expertise em Captura de Realidade 3D, Modelagem BIM de Tubulações, Análises de Flexibilidade e Automação CAD. Entregamos projetos mais inteligentes, seguros e eficientes.</p>
+            
+            <div class="hero-botoes">
+                <a href="#contato" class="btn-hero">Fale com um Especialista</a>
+                <a href="#solucoes" class="btn-hero-secundario">Conheça Nossas Soluções</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="solucoes" style="background-color: white;">
+        <h2 class="section-title">Apoio Técnico e Engenharia Especializada</h2>
+        <div class="solucoes-grid">
+            
+            <div class="card">
+                <div class="card-img">
+                    <img src="image_5ecf3f.jpg" alt="Engenharia BIM e Plant 3D" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="card-content">
+                    <h3>Engenharia de Tubulações BIM 3D</h3>
+                    <p>Transformamos conceitos em modelos digitais de alta fidelidade.</p>
+                    <p>✔ Modelagem 3D Avançada<br>✔ Compatibilização Multidisciplinar <br>✔ Extração MTO Automática</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-img">
+                    <img src="image_5eceff.jpg" alt="Análise de Flexibilidade CAESAR II" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="card-content">
+                    <h3>Análises e Conformidade</h3>
+                    <p>Segurança inegociável em sistemas de tubulação, garantindo conformidade com ASME, API e NFPA.</p>
+                    <p>✔ Stress Analysis (CAESAR II)<br>✔ Dimensionamento Hidráulico (AFT Fathom)<br>✔ Mitigação de Golpe de Aríete (AFT Impulse)</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-img">
+                    <img src="image_5e7ccd.jpg" alt="Captura 3D com Drone" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="card-content">
+                    <h3>Captura de Realidade 3D</h3>
+                    <p>Base exata para projetos Brownfield e Greenfield através de Laser Scanning 3D e Mapeamento com Drones.</p>
+                    <p>✔ Levantamento Topográfico LiDAR<br>✔ Escaneamento 3D As-Built<br>✔ Modelagem a partir de Nuvem de Pontos</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="portfolio" style="background-color: var(--cinza-claro);">
+        <h2 class="section-title">Nosso Know-How</h2>
+        <div class="portfolio-lista">
+            <div class="projeto-item">
+                <span>CSN / ANGLO AMERICAN / VALE</span>
+                <h4>Grandes Dutos e Mineração</h4>
+                <p>Projetos detalhados de Minerodutos e Rejeitodutos para filtragem.</p>
+            </div>
+            <div class="projeto-item">
+                <span>CBMM / NEXA / HORIZONTE MINERALS</span>
+                <h4>Plantas de Processo e Siderurgia</h4>
+                <p>Liderança em detalhamento de sistemas para expansões de pátio, Utilidades para Forno FE-03 (Fusão e Refino), Concentração II e Planta de Extração de Níquel no Projeto Araguaia.</p>
+            </div>
+            <div class="projeto-item">
+                <span>VALE FERTILIZANTES / CCR METRÔ</span>
+                <h4>Sistemas Auxiliares e SPCI</h4>
+                <p>Dimensionamento e elaboração de Rede de Hidrantes, água de serviço e tubulação de utilidades em conformidade com NFPA e FM Global.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato">
+        <h2 class="section-title">Entre em Contato</h2>
+        <div class="contato-container">
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label>Nome ou Empresa</label>
+                    <input type="text" placeholder="Digite seu nome" required>
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Assunto / Interesse</label>
+                    <select required>
+                        <option value="">Selecione uma opção...</option>
+                        <option value="Serviços de Engenharia (BIM, Cálculos)">Apoio Técnico em Projetos (BIM, Cálculos)</option>
+                        <option value="Captura 3D (Scanner / Drone)">Captura de Realidade 3D (Scanner / Drone)</option>
+                        <option value="Auditoria de Terceiros">Auditoria e Verificação de Projetos</option>
+                        <option value="Outros Assuntos">Outros Assuntos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mensagem</label>
+                    <textarea rows="5" placeholder="Como podemos ajudar o seu projeto?" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Enviar Mensagem</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 LAENGED Engenharia e Sistemas. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>

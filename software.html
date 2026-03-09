@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAENGED Batch Pro - Automação e QA</title>
+    <style>
+        /* ================= PALETA DE CORES E FONTES ================= */
+        :root {
+            --azul-corp: #0067c0;
+            --laranja-cta: #d83b01;
+            --verde-sucesso: #107c10;
+            --escuro: #333333;
+            --cinza-claro: #f9f9f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { color: var(--escuro); background-color: var(--cinza-claro); line-height: 1.6; }
+
+        /* ================= CABEÇALHO E NAVEGAÇÃO ================= */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed; width: 100%; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 50px;
+        }
+        .logo { display: flex; align-items: center; }
+        nav ul { list-style: none; display: flex; gap: 25px; align-items: center; }
+        nav ul li a { text-decoration: none; color: var(--escuro); font-weight: 600; transition: 0.3s; }
+        nav ul li a:hover { color: var(--laranja-cta); }
+        .active-link { color: var(--laranja-cta) !important; border-bottom: 2px solid var(--laranja-cta); padding-bottom: 2px;}
+        
+        .btn-portal { background-color: var(--azul-corp); color: white !important; padding: 8px 15px; border-radius: 4px; }
+        .btn-portal:hover { background-color: #00509e; color: white !important; }
+
+        /* ================= HERO SECTION (Apresentação do Software) ================= */
+        .hero-software {
+            margin-top: 60px;
+            background: linear-gradient(135deg, #001f3f 0%, var(--azul-corp) 100%);
+            color: white; padding: 80px 50px; display: flex; align-items: center; justify-content: space-between; gap: 40px;
+        }
+        .hero-text { flex: 1; max-width: 600px; }
+        /* Título um pouco menor caso o novo texto seja mais longo */
+        .hero-text h1 { font-size: 38px; margin-bottom: 20px; line-height: 1.2; }
+        .hero-text p { font-size: 18px; margin-bottom: 30px; font-weight: 300; opacity: 0.9; }
+        .hero-image { flex: 1; text-align: right; }
+        .hero-image img { width: 100%; max-width: 700px; border-radius: 8px; box-shadow: 0 15px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
+        
+        .btn-action { background-color: var(--laranja-cta); color: white; padding: 15px 30px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; transition: 0.3s; display: inline-block; border: none; cursor: pointer; }
+        .btn-action:hover { background-color: #a42600; transform: translateY(-2px); }
+
+        .btn-manual { background-color: transparent; color: white; border: 2px solid white; padding: 13px 25px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; transition: 0.3s; display: inline-block; margin-left: 15px;}
+        .btn-manual:hover { background-color: rgba(255,255,255,0.1); }
+
+        /* Responsividade básica para a Hero Section */
+        @media (max-width: 992px) {
+            .hero-software { flex-direction: column; text-align: center; padding: 60px 20px; }
+            .hero-text, .hero-image { flex: none; width: 100%; max-width: 100%; }
+            .hero-image { text-align: center; margin-top: 30px; }
+            .btn-manual { margin-left: 0; margin-top: 15px; }
+        }
+
+        /* ================= SEÇÃO DE VÍDEO EXPLICATIVO ================= */
+        .video-section { padding: 80px 50px; background-color: white; text-align: center; }
+        .video-section h2 { font-size: 32px; color: var(--azul-corp); margin-bottom: 15px; }
+        .video-section p { color: #666; margin-bottom: 40px; font-size: 18px; }
+        
+        .video-container {
+            position: relative; max-width: 900px; margin: 0 auto;
+            padding-bottom: 56.25%; /* Proporção 16:9 para YouTube */
+            height: 0; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background-color: #000;
+        }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        /* ================= FUNCIONALIDADES (Grid) ================= */
+        .features-section { padding: 80px 50px; }
+        .features-section h2 { font-size: 32px; color: var(--azul-corp); text-align: center; margin-bottom: 50px; }
+        
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .feature-card { background: white; padding: 30px; border-radius: 8px; border-top: 4px solid var(--verde-sucesso); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .feature-card h3 { font-size: 20px; color: var(--escuro); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;}
+        .feature-card p { color: #555; font-size: 15px; }
+        
+        /* ================= SEÇÃO DE PREÇOS (Teaser para o Portal) ================= */
+        .pricing-section { background-color: white; padding: 60px 50px; text-align: center; }
+        .pricing-section h2 { font-size: 28px; color: var(--azul-corp); margin-bottom: 20px; }
+        .pricing-section p { max-width: 700px; margin: 0 auto 30px; color: #555; font-size: 16px; }
+        
+        /* ================= FOOTER ================= */
+        footer { background-color: var(--escuro); color: white; text-align: center; padding: 20px; font-size: 14px; margin-top: 40px;}
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="Logo LAENGED Engenharia" height="40">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="software.html" class="active-link">LAENGED Batch Pro</a></li>
+                <li><a href="index.html#solucoes">Gestão de Projetos & Engenharia</a></li>
+                <li><a href="index.html#portfolio">Projetos</a></li>
+                <li><a href="index.html#contato">Contato</a></li>
+                <li><a href="portal.html" class="btn-portal">Portal do Cliente</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero-software">
+        <div class="hero-text">
+            <h1>Foco no que realmente importa: a inteligência do seu projeto.</h1>
+            <p>O LAENGED Batch Pro é a plataforma desenvolvida para potencializar o dia a dia de desenhistas, projetistas, engenheiros e coordenadores. Automatize edições em lote no AutoCAD, blinde seus projetos contra erros de preenchimento de dados e permita que sua equipe dedique seu talento ao design e à inovação, deixando o trabalho operacional e repetitivo para a tecnologia.</p>
+            
+            <div style="margin-top: 20px;">
+                <a href="portal.html" class="btn-action">Assinar Agora (Portal)</a>
+                <a href="Manual_LAENGED Batch Pro.pdf" target="_blank" class="btn-manual">📥 Baixar Manual de Instruções</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="image_547cbf.jpg" alt="Interface do Software LAENGED Batch Pro">
+        </div>
+    </section>
+
+    <section class="video-section">
+        <h2>Veja o Robô em Ação</h2>
+        <p>Assista ao nosso vídeo explicativo e descubra como processar centenas de arquivos em minutos.</p>
+        
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/SEU_CODIGO_AQUI?rel=0" title="Vídeo Explicativo LAENGED Batch Pro" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <h2>Recursos Técnicos do Sistema</h2>
+        <div class="features-grid">
+            
+            <div class="feature-card">
+                <h3 style="color: var(--laranja-cta);">📊 Auditoria QA com IA</h3>
+                <p>Nossa inteligência cruza automaticamente as notas de continuidade, referências gerais e carimbos dos desenhos (DWG) diretamente com a sua Planilha MDR de referência. Elimine furos de projeto antes de enviar ao cliente.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3 style="color: var(--laranja-cta);">🔄 Gestão de Revisões (Batch)</h3>
+                <p>O sistema extrai os parâmetros atuais dos arquivos, cria uma matriz em Excel para o gestor definir os novos status (Emissão Inicial, Aprovado, Cancelado) e injeta as novas revisões em todo o pacote simultaneamente.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3 style="color: var(--laranja-cta);">🔍 Localizar e Substituir Avançado</h3>
+                <p>Altere Tags de tubulação, textos de projeto ou numerações de equipamento em centenas de arquivos de uma só vez, com relatórios completos do que foi alterado gerados automaticamente em Excel.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3 style="color: var(--laranja-cta);">📑 Motor PDF e Limpeza CAD</h3>
+                <p>Gere PDFs automáticos diretamente dos Layouts ou Models, aplique penas (CTB) e execute rotinas silenciosas de PURGE, remoção de lixo (.BAK) e nivelamento do Eixo Z para arquivos mais leves.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3 style="color: var(--laranja-cta);">🏷️ Renomeador em Lote Inteligente</h3>
+                <p>Padronize a nomenclatura do seu pacote de entrega em segundos. Adicione prefixos, sufixos, remova trechos específicos ou crie sequências numéricas automáticas em toda a sua pasta de projetos.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3 style="color: var(--laranja-cta);">✂️ Unificação e Separação (Merge/Split)</h3>
+                <p>Junte dezenas de folhas DWG soltas em um único arquivo mestre de forma coordenada, ou faça o inverso: separe projetos complexos em folhas individuais. Excelente também para a união de cadernos em PDF.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="pricing-section">
+        <h2>Licenciamento Corporativo (Modelo de Assinatura)</h2>
+        <p>
+            O software roda localmente, garantindo <strong>100% de segurança e sigilo</strong> para os arquivos DWG do seu projeto. Oferecemos uma política de <strong>Tiered Pricing (Preço Escalonado)</strong>: quanto mais licenças sua equipe de engenharia precisar, menor será o custo unitário. Toda a gestão de assinaturas, adição de máquinas e cálculo de descontos pró-rata por tempo é feita automaticamente em nosso Portal de Clientes.
+        </p>
+        <a href="portal.html" class="btn-action" style="background-color: var(--verde-sucesso);">Acessar Portal e Calcular Plano</a>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 LAENGED Engenharia e Sistemas. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>
