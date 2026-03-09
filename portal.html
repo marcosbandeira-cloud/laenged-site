@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal do Cliente - LAENGED Suite</title>
+    <title>Portal do Cliente - LAENGED Batch Pro</title>
     <style>
         /* ================= PALETA DE CORES ================= */
         :root {
@@ -16,44 +16,44 @@
             --borda: #e1e4e8;
             --vermelho-erro: #dc3545;
             --azul-info: #17a2b8;
+            --roxo-trial: #6f42c1;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--cinza-claro); color: var(--escuro); }
 
-        /* ================= TELA DE LOGIN ================= */
-        #login-screen {
+        /* ================= TELAS DE AUTENTICAÇÃO (LOGIN / REGISTRO) ================= */
+        .auth-screen {
             height: 100vh; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, #001f3f 0%, var(--azul-corp) 100%);
         }
-        .login-box {
+        .auth-box {
             background: var(--branco); padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             width: 100%; max-width: 400px; text-align: center;
         }
-        .login-box img { max-width: 200px; margin-bottom: 30px; }
-        .form-group { margin-bottom: 20px; text-align: left; }
+        .auth-box img { max-width: 180px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
         .form-group input { width: 100%; padding: 12px; border: 1px solid var(--borda); border-radius: 4px; font-size: 15px; }
-        .btn-login { width: 100%; background: var(--azul-corp); color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s; }
-        .btn-login:hover { background: #00509e; }
-        .links-login { margin-top: 20px; font-size: 14px; display: flex; justify-content: space-between; }
-        .links-login a { color: var(--azul-corp); text-decoration: none; font-weight: 600;}
-        .links-login a:hover { text-decoration: underline; }
+        .btn-auth { width: 100%; background: var(--azul-corp); color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s; margin-top: 10px;}
+        .btn-auth:hover { background: #00509e; }
+        .btn-auth:disabled { background: #999; cursor: not-allowed; }
+        .auth-links { margin-top: 20px; font-size: 14px; }
+        .auth-links a { color: var(--azul-corp); text-decoration: none; font-weight: 600; cursor: pointer;}
+        .auth-links a:hover { text-decoration: underline; }
+
+        #registro-box { display: none; } /* Oculto por padrão */
 
         /* ================= DASHBOARD DO USUÁRIO ================= */
-        #dashboard-screen { display: none; } /* Oculto inicialmente */
+        #dashboard-screen { display: none; }
         
-        /* Header do Painel */
         .topbar { background: var(--branco); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .client-info { display: flex; align-items: center; gap: 15px; }
         .client-logo { width: 50px; height: 50px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #999; border: 2px solid var(--borda); overflow: hidden;}
-        .client-logo img { width: 100%; height: 100%; object-fit: cover; }
         .btn-sair { background: transparent; border: 1px solid var(--escuro); padding: 5px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;}
         .btn-sair:hover { background: #eee; }
 
-        /* Container Principal */
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        
         @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
 
         .card { background: var(--branco); border-radius: 8px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--borda); margin-bottom: 30px; }
@@ -63,23 +63,25 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--borda); font-size: 14px; }
         th { background: var(--cinza-claro); font-weight: 600; color: var(--escuro); }
+        
+        /* Badges de Status */
         .status-ativo { background: var(--verde-sucesso); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
         .status-disponivel { background: var(--azul-info); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+        .status-trial { background: var(--roxo-trial); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+        
         .btn-desvincular { background-color: var(--vermelho-erro); color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 12px; font-weight: bold; transition: 0.3s;}
         .btn-desvincular:hover { background-color: #a71d2a; }
 
-        /* Botão de Download */
         .download-area { text-align: center; padding: 20px 0; }
         .btn-download { background: var(--verde-sucesso); color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 18px; font-weight: bold; display: inline-block; transition: 0.3s;}
         .btn-download:hover { background: #0d650d; transform: translateY(-2px); }
 
-        /* Simulador de Compra */
         .simulador-box { background: var(--cinza-claro); padding: 20px; border-radius: 6px; margin-bottom: 20px; }
         .qtd-input { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; margin-top: 10px; margin-bottom: 15px;}
         .preco-destaque { font-size: 28px; font-weight: bold; color: var(--escuro); margin-bottom: 10px; display: block;}
         
         .pagamento-botoes { display: flex; flex-direction: column; gap: 10px; }
-        .btn-pix { background: #32BCAD; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        .btn-pix { background: #32BCAD; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer;}
         .btn-pix:hover { background: #28968a; }
         .btn-cartao { background: var(--escuro); color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer;}
         .btn-cartao:hover { background: #000; }
@@ -87,49 +89,70 @@
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="login-box">
-            <img src="logo.png" alt="LAENGED Logo" style="height: 50px; width: auto;">
+    <div id="auth-screen" class="auth-screen">
+        
+        <div id="login-box" class="auth-box">
+            <img src="logo.png" alt="LAENGED Logo">
             <h2 style="margin-bottom: 20px; font-size: 20px; color: var(--escuro);">Acesso ao Portal</h2>
             
             <div class="form-group">
                 <label>E-mail Corporativo</label>
-                <input type="email" placeholder="engenharia@suaempresa.com.br">
+                <input type="email" id="login-email" placeholder="engenharia@suaempresa.com.br">
             </div>
             <div class="form-group">
                 <label>Senha</label>
-                <input type="password" placeholder="••••••••">
+                <input type="password" id="login-senha" placeholder="••••••••">
             </div>
             
-            <button class="btn-login" onclick="entrarDashboard()">Entrar no Sistema</button>
+            <button class="btn-auth" id="btn-fazer-login" onclick="fazerLogin()">Entrar no Sistema</button>
             
-            <div class="links-login">
-                <a href="#">Esqueci minha senha</a>
-                <a href="#">Falar com Suporte</a>
+            <div class="auth-links">
+                <p>Ainda não tem conta? <a onclick="alternarTelaAuth('registro')">Testar Grátis por 5 Dias</a></p>
             </div>
         </div>
+
+        <div id="registro-box" class="auth-box">
+            <img src="logo.png" alt="LAENGED Logo">
+            <h2 style="margin-bottom: 10px; font-size: 20px; color: var(--escuro);">Criar Conta Gratuita</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Ganhe 5 dias de teste grátis com todas as funções liberadas.</p>
+            
+            <div class="form-group">
+                <label>Nome da Empresa</label>
+                <input type="text" id="reg-empresa" placeholder="Construtora Alpha S.A.">
+            </div>
+            <div class="form-group">
+                <label>E-mail Corporativo</label>
+                <input type="email" id="reg-email" placeholder="engenharia@empresa.com.br">
+            </div>
+            <div class="form-group">
+                <label>Criar uma Senha</label>
+                <input type="password" id="reg-senha" placeholder="Mínimo 6 caracteres">
+            </div>
+            
+            <button class="btn-auth" id="btn-fazer-registro" onclick="fazerRegistro()">Criar Conta e Iniciar Teste</button>
+            
+            <div class="auth-links">
+                <p>Já tem uma conta? <a onclick="alternarTelaAuth('login')">Fazer Login</a></p>
+            </div>
+        </div>
+
     </div>
 
     <div id="dashboard-screen">
         
         <header class="topbar">
-            <a href="index.html">
-                <img src="logo.png" alt="LAENGED Logo" height="35">
-            </a>
+            <a href="index.html"><img src="logo.png" alt="LAENGED Logo" height="35"></a>
             <div class="client-info">
                 <div style="text-align: right;">
-                    <span style="display: block; font-weight: bold; font-size: 14px;">Portal do Cliente</span>
-                    <span style="font-size: 12px; color: #666;">Gerenciamento de Ativos</span>
+                    <span id="nome-empresa-header" style="display: block; font-weight: bold; font-size: 14px;">Carregando...</span>
+                    <span style="font-size: 12px; color: #666;">Painel de Licenças</span>
                 </div>
-                <div class="client-logo">
-                    LG
-                </div>
-                <button class="btn-sair" onclick="sairDashboard()">Sair</button>
+                <div class="client-logo">LG</div>
+                <button class="btn-sair" onclick="sair()">Sair</button>
             </div>
         </header>
 
         <div class="container">
-            
             <div class="col-main">
                 
                 <div class="card">
@@ -142,22 +165,23 @@
                 </div>
 
                 <div class="card">
-                    <h2>🔑 Gestão de Licenças (Máquinas Ativas)</h2>
-                    <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Abaixo estão as chaves de acesso atreladas à sua empresa. Cada chave é válida para 1 (um) computador.</p>
+                    <h2>🔑 Minhas Licenças e Dispositivos</h2>
+                    <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Aqui você gerencia o acesso do seu time. Licenças de avaliação (Trial) são travadas no primeiro PC ativado.</p>
                     
                     <div style="overflow-x: auto;">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Chave de Ativação</th>
+                                    <th>Tipo</th>
                                     <th>Status</th>
-                                    <th>Computador Vinculado</th>
+                                    <th>PC Vinculado</th>
                                     <th>Vencimento</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="corpo-tabela">
-                                <tr><td colspan="5" style="text-align: center; color: #666;">Carregando dados do servidor...</td></tr>
+                                <tr><td colspan="6" style="text-align: center; color: #666;">Carregando dados...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -166,8 +190,8 @@
 
             <div class="col-side">
                 <div class="card">
-                    <h2>🛒 Adquirir Novas Licenças</h2>
-                    <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Simule e compre licenças adicionais para o seu time de engenharia. Assinatura válida por 12 meses.</p>
+                    <h2>🛒 Adquirir Assinatura Anual</h2>
+                    <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Assinatura válida por 12 meses. O desconto corporativo é aplicado automaticamente pelo volume.</p>
                     
                     <div class="simulador-box">
                         <label style="font-weight: bold; font-size: 14px;">Quantidade de Licenças:</label>
@@ -181,10 +205,9 @@
                     </div>
 
                     <div class="pagamento-botoes">
-                        <button class="btn-pix">◈ Pagar com PIX (Aprovação Imediata)</button>
+                        <button class="btn-pix">◈ Pagar com PIX (Libera na hora)</button>
                         <button class="btn-cartao">💳 Cartão de Crédito (Até 12x)</button>
                     </div>
-                    <p style="font-size: 11px; color: #999; text-align: center; margin-top: 15px;">A chave de ativação é gerada automaticamente após a confirmação do pagamento.</p>
                 </div>
             </div>
 
@@ -192,68 +215,144 @@
     </div>
 
     <script>
-        // --- NAVEGAÇÃO DE TELAS ---
-        function entrarDashboard() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard-screen').style.display = 'block';
-            carregarLicencas(); // Ao entrar, carrega a tabela da nuvem
-        }
+        const API_URL = "https://laenged-api.onrender.com";
 
-        function sairDashboard() {
-            document.getElementById('dashboard-screen').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
-        }
-
-        // --- SIMULADOR DE COMPRAS ---
-        function calcularPreco() {
-            let qtd = document.getElementById('qtd-licencas').value;
-            let precoBase = 1200; // Preço de 1 licença
-            let valorTotal = 0;
-            let desconto = "";
-
-            if (qtd >= 10) {
-                valorTotal = qtd * (precoBase * 0.7); // 30% de desconto
-                desconto = "Desconto Corporativo de 30% Aplicado!";
-            } else if (qtd >= 5) {
-                valorTotal = qtd * (precoBase * 0.85); // 15% de desconto
-                desconto = "Desconto de Equipe de 15% Aplicado!";
+        // === CONTROLE DE TELAS ===
+        function alternarTelaAuth(tela) {
+            if(tela === 'registro') {
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('registro-box').style.display = 'block';
             } else {
-                valorTotal = qtd * precoBase;
-                desconto = ""; // Sem desconto
+                document.getElementById('registro-box').style.display = 'none';
+                document.getElementById('login-box').style.display = 'block';
             }
-
-            // Formata para moeda brasileira (R$)
-            document.getElementById('valor-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('mensagem-desconto').innerText = desconto;
         }
 
-        // --- MOTOR DA API (COMUNICAÇÃO COM O RENDER) ---
-        async function carregarLicencas() {
-            const tabela = document.getElementById("corpo-tabela");
-            tabela.innerHTML = "<tr><td colspan='5' style='text-align: center; color: #666;'>Carregando dados seguros...</td></tr>";
+        function abrirDashboard() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('dashboard-screen').style.display = 'block';
+            document.getElementById('nome-empresa-header').innerText = localStorage.getItem('laenged_empresa_nome');
+            carregarLicencas();
+        }
+
+        function sair() {
+            localStorage.removeItem('laenged_empresa_id');
+            localStorage.removeItem('laenged_empresa_nome');
+            document.getElementById('dashboard-screen').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex';
+        }
+
+        // Verifica se já está logado ao carregar a página
+        window.onload = () => {
+            if (localStorage.getItem('laenged_empresa_id')) {
+                abrirDashboard();
+            }
+        };
+
+        // === API: LOGIN ===
+        async function fazerLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const senha = document.getElementById('login-senha').value.trim();
+            if(!email || !senha) return alert("Preencha e-mail e senha.");
+
+            document.getElementById('btn-fazer-login').innerText = "Aguarde...";
+            document.getElementById('btn-fazer-login').disabled = true;
 
             try {
-                // Vai até o servidor Python buscar os dados reais
-                const resposta = await fetch("https://laenged-api.onrender.com/painel/licencas");
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, senha: senha })
+                });
+                const data = await res.json();
+
+                if (data.status === "SUCESSO") {
+                    localStorage.setItem('laenged_empresa_id', data.empresa_id);
+                    localStorage.setItem('laenged_empresa_nome', data.nome_empresa);
+                    abrirDashboard();
+                } else {
+                    alert("❌ " + data.mensagem);
+                }
+            } catch (e) {
+                alert("Falha de conexão com o servidor.");
+            } finally {
+                document.getElementById('btn-fazer-login').innerText = "Entrar no Sistema";
+                document.getElementById('btn-fazer-login').disabled = false;
+            }
+        }
+
+        // === API: REGISTRO E TRIAL ===
+        async function fazerRegistro() {
+            const empresa = document.getElementById('reg-empresa').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const senha = document.getElementById('reg-senha').value.trim();
+            if(!empresa || !email || !senha) return alert("Preencha todos os campos.");
+
+            document.getElementById('btn-fazer-registro').innerText = "Criando conta e gerando licença...";
+            document.getElementById('btn-fazer-registro').disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/registro`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome_empresa: empresa, email: email, senha: senha })
+                });
+                const data = await res.json();
+
+                if (data.status === "SUCESSO") {
+                    alert("🎉 " + data.mensagem + "\n\nFaça o login agora para acessar sua chave.");
+                    alternarTelaAuth('login');
+                    document.getElementById('login-email').value = email; // Preenche o e-mail pro cara
+                } else {
+                    alert("❌ " + data.mensagem);
+                }
+            } catch (e) {
+                alert("Falha de conexão com o servidor.");
+            } finally {
+                document.getElementById('btn-fazer-registro').innerText = "Criando Conta e Iniciar Teste";
+                document.getElementById('btn-fazer-registro').disabled = false;
+            }
+        }
+
+        // === API: CARREGAR LICENÇAS DO CLIENTE ===
+        async function carregarLicencas() {
+            const empresa_id = localStorage.getItem('laenged_empresa_id');
+            const tabela = document.getElementById("corpo-tabela");
+            tabela.innerHTML = "<tr><td colspan='6' style='text-align: center; color: #666;'>Buscando do banco de dados...</td></tr>";
+
+            try {
+                const resposta = await fetch(`${API_URL}/painel/licencas/${empresa_id}`);
                 const json = await resposta.json();
 
                 if (json.status === "SUCESSO") {
-                    tabela.innerHTML = ""; // Limpa a mensagem
+                    tabela.innerHTML = ""; 
+                    if (json.dados.length === 0) {
+                        tabela.innerHTML = "<tr><td colspan='6' style='text-align: center; color: #666;'>Nenhuma licença encontrada.</td></tr>";
+                        return;
+                    }
 
-                    // Para cada licença, desenha uma linha nova
                     json.dados.forEach(licenca => {
+                        let isTrial = licenca.tipo === "TRIAL";
+                        let badgeTipo = isTrial ? `<span class="status-trial">TRIAL 5 DIAS</span>` : `<span class="status-ativo">PAGO</span>`;
+                        
                         let corStatus = licenca.status === "EM_USO" ? "status-ativo" : "status-disponivel";
-                        let textoStatus = licenca.status === "EM_USO" ? "Em Uso" : "Disponível";
+                        let textoStatus = licenca.status === "EM_USO" ? "Em Uso" : "Livre";
                         let comp = licenca.pc && licenca.pc !== "Nenhum" ? licenca.pc : "<span style='color: #999;'>Aguardando Vínculo</span>";
                         
-                        let botaoAcao = licenca.status === "EM_USO" 
-                            ? `<button class="btn-desvincular" onclick="desvincular('${licenca.chave}')">Desvincular PC</button>` 
-                            : `-`;
+                        // Lógica da trava: Se estiver em uso E FOR TRIAL, esconde o botão de desvincular!
+                        let botaoAcao = "-";
+                        if (licenca.status === "EM_USO") {
+                            if (isTrial) {
+                                botaoAcao = "<span style='color:#999; font-size:11px;'>Intransferível</span>";
+                            } else {
+                                botaoAcao = `<button class="btn-desvincular" onclick="desvincular('${licenca.chave}')">Desvincular PC</button>`;
+                            }
+                        }
 
-                        // No futuro, isso será tratado para não mostrar chaves de outras empresas
                         let linha = `
                             <tr>
                                 <td><strong>${licenca.chave}</strong></td>
+                                <td>${badgeTipo}</td>
                                 <td><span class="${corStatus}">${textoStatus}</span></td>
                                 <td>${comp}</td>
                                 <td>${licenca.vencimento}</td>
@@ -264,37 +363,46 @@
                     });
                 }
             } catch (erro) {
-                console.error("Erro ao conectar na API:", erro);
-                tabela.innerHTML = "<tr><td colspan='5' style='text-align: center; color: red;'>Erro ao conectar com o servidor. A API pode estar desligada ou atualizando.</td></tr>";
+                tabela.innerHTML = "<tr><td colspan='6' style='text-align: center; color: red;'>Erro ao conectar com o servidor.</td></tr>";
             }
         }
 
+        // === API: DESVINCULAR MÁQUINA ===
         async function desvincular(chave) {
-            // Pede confirmação
-            if (!confirm("Tem certeza que deseja liberar a chave " + chave + " para uso em outro computador?\n\nO computador atual perderá o acesso imediatamente.")) {
-                return;
-            }
+            if (!confirm(`Tem certeza que deseja liberar a chave ${chave}?\nO PC atual perderá o acesso imediatamente.`)) return;
 
             try {
-                // Manda a ordem de Reset
-                const resposta = await fetch("https://laenged-api.onrender.com/desvincular", {
+                const resposta = await fetch(`${API_URL}/desvincular`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ chave_acesso: chave })
                 });
-
                 const json = await resposta.json();
 
                 if (json.status === "SUCESSO") {
                     alert("✅ Sucesso: " + json.mensagem);
-                    carregarLicencas(); // Recarrega a tabela para mostrar o PC liberado
+                    carregarLicencas(); 
                 } else {
                     alert("❌ Erro: " + json.mensagem);
                 }
             } catch (erro) {
-                console.error("Erro ao desvincular:", erro);
-                alert("Erro ao tentar falar com o servidor. Tente novamente.");
+                alert("Erro ao tentar falar com o servidor.");
             }
+        }
+
+        // --- SIMULADOR DE COMPRAS ---
+        function calcularPreco() {
+            let qtd = document.getElementById('qtd-licencas').value;
+            let precoBase = 1200;
+            let valorTotal = 0;
+            let desconto = "";
+
+            if (qtd >= 10) { valorTotal = qtd * (precoBase * 0.7); desconto = "Desconto Corporativo de 30% Aplicado!"; }
+            else if (qtd >= 5) { valorTotal = qtd * (precoBase * 0.85); desconto = "Desconto de Equipe de 15% Aplicado!"; }
+            else { valorTotal = qtd * precoBase; }
+
+            document.getElementById('valor-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('mensagem-desconto').innerText = desconto;
         }
     </script>
 </body>
