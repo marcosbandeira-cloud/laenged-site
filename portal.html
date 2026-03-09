@@ -280,15 +280,15 @@
                         <div class="resumo-valores">
                             <div class="linha-valor">
                                 <span>Valor Unitário Base:</span>
-                                <span>R$ 420,00</span>
+                                <span id="valor-unitario-base-display">Carregando...</span>
                             </div>
                             <div class="linha-valor" style="color: var(--azul-corp); font-weight: bold;">
                                 <span>Valor Unitário Final:</span>
-                                <span id="valor-unitario-display">R$ 420,00</span>
+                                <span id="valor-unitario-display">Carregando...</span>
                             </div>
                             <div class="linha-valor" style="margin-top: 10px;">
                                 <span style="font-size: 16px; font-weight: bold; color: var(--escuro);">TOTAL (Anual):</span>
-                                <span class="preco-destaque" id="valor-total" style="margin-bottom: 0;">R$ 420,00</span>
+                                <span class="preco-destaque" id="valor-total" style="margin-bottom: 0;">Carregando...</span>
                             </div>
                         </div>
                         
@@ -310,6 +310,7 @@
     <script>
         const API_URL = "https://laenged-api.onrender.com";
         let descontoCupomAtivo = 0; 
+        let precoBaseGlob = 0.00; // NOVO: Preço dinâmico que virá do banco
 
         // === CONTROLE DE TELAS ===
         function alternarTelaAuth(tela) {
@@ -348,7 +349,7 @@
 
         window.onload = () => {
             if (localStorage.getItem('laenged_empresa_id')) abrirDashboard();
-            else calcularPreco(); 
+            carregarPrecoDoBanco(); // NOVO: Busca o preço do banco ao abrir a página
         };
 
         // === API: LOGIN & REGISTRO ===
@@ -393,7 +394,6 @@
 
             if(!empresa || !email || !senha || !senhaConfirma) return alert("Preencha todos os campos.");
             
-            // VERIFICA SE AS SENHAS SÃO IGUAIS ANTES DE ENVIAR PRA API
             if(senha !== senhaConfirma) return alert("As senhas não coincidem. Por favor, digite senhas iguais nos dois campos.");
 
             document.getElementById('btn-fazer-registro').innerText = "Enviando código para o e-mail...";
@@ -485,7 +485,6 @@
             
             if(!codigo || !novaSenha || !novaSenhaConfirma) return alert("Preencha o código e a nova senha.");
             
-            // VERIFICA SE AS NOVAS SENHAS SÃO IGUAIS
             if(novaSenha !== novaSenhaConfirma) return alert("As senhas digitadas não coincidem. Verifique os campos e tente novamente.");
 
             document.getElementById('btn-redefinir-senha').innerText = "Salvando...";
@@ -573,7 +572,19 @@
             calcularPreco();
         }
 
-        // === API: CUPONS ===
+        // === API: PREÇOS E CUPONS (NOVO) ===
+        async function carregarPrecoDoBanco() {
+            try {
+                const res = await fetch(`${API_URL}/config/preco`);
+                const data = await res.json();
+                if(data.status === "SUCESSO") {
+                    precoBaseGlob = data.preco;
+                    document.getElementById('valor-unitario-base-display').innerText = precoBaseGlob.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    calcularPreco(); 
+                }
+            } catch(e) { console.log("Erro ao buscar preço."); }
+        }
+
         async function aplicarCupom() {
             let cupom = document.getElementById('input-cupom').value.toUpperCase().trim();
             if (!cupom) { descontoCupomAtivo = 0; calcularPreco(); return; }
@@ -595,19 +606,20 @@
         }
 
         function calcularPreco() {
+            if (precoBaseGlob === 0) return; // Aguarda o preço chegar da API
+
             let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
-            let precoBase = 420.00;
-            let precoUnitario = precoBase;
+            let precoUnitario = precoBaseGlob;
 
             if (qtd > 1) {
                 let expoente = qtd > 11 ? 10 : (qtd - 1);
-                precoUnitario = precoBase * Math.pow(0.99, expoente); 
+                precoUnitario = precoBaseGlob * Math.pow(0.99, expoente); 
             }
 
             let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
             let valorTotal = qtd * precoComCupom;
 
-            let totalSemDesconto = precoBase * qtd;
+            let totalSemDesconto = precoBaseGlob * qtd;
             let economiaReal = totalSemDesconto - valorTotal;
             let porcentagemEconomia = (economiaReal / totalSemDesconto) * 100;
 

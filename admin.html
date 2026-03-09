@@ -2,38 +2,343 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>LAENGED - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - LAENGED</title>
     <style>
-        body { font-family: Arial; background: #f4f6f8; padding: 50px; }
-        .card { background: white; padding: 30px; border-radius: 8px; max-width: 400px; margin: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #d83b01; color: white; border: none; font-weight: bold; cursor: pointer; }
+        :root {
+            --azul-corp: #0067c0;
+            --laranja-cta: #d83b01;
+            --verde-sucesso: #107c10;
+            --escuro: #2c3e50;
+            --cinza-bg: #f4f7f6;
+            --branco: #ffffff;
+            --borda: #e1e4e8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--cinza-bg); color: var(--escuro); display: flex; height: 100vh; overflow: hidden; }
+
+        /* MENU LATERAL */
+        .sidebar { width: 250px; background: #1a252f; color: white; display: flex; flex-direction: column; }
+        .sidebar-logo { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 20px; font-weight: bold; color: var(--laranja-cta); letter-spacing: 1px;}
+        .menu-btn { padding: 15px 20px; background: transparent; color: #aeb6bf; border: none; text-align: left; cursor: pointer; font-size: 15px; border-left: 4px solid transparent; transition: 0.3s; }
+        .menu-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+        .menu-btn.ativo { background: rgba(255,255,255,0.1); color: white; border-left-color: var(--laranja-cta); font-weight: bold; }
+
+        /* ÁREA PRINCIPAL */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .top-header h1 { font-size: 24px; color: var(--escuro); }
+        .badge-admin { background: var(--laranja-cta); color: white; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; }
+
+        /* SEÇÕES OCULTAS */
+        .secao { display: none; animation: fadeIn 0.3s; }
+        .secao.ativa { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CARDS DO DASHBOARD FINANCEIRO */
+        .grid-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .kpi-card { background: var(--branco); padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid var(--azul-corp); }
+        .kpi-card h3 { font-size: 13px; color: #7f8c8d; text-transform: uppercase; margin-bottom: 10px; }
+        .kpi-card .valor { font-size: 28px; font-weight: bold; color: var(--escuro); }
+        .kpi-card.verde { border-color: var(--verde-sucesso); }
+        .kpi-card.laranja { border-color: var(--laranja-cta); }
+
+        /* TABELAS GERAIS */
+        .card-table { background: var(--branco); border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px 15px; border-bottom: 1px solid var(--borda); font-size: 14px; }
+        th { background: #f8f9f9; color: #555; font-weight: bold; text-transform: uppercase; font-size: 12px;}
+        tr:hover { background-color: #fcfcfc; }
+
+        /* STATUS BADGES */
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; }
+        .bg-verde { background: var(--verde-sucesso); }
+        .bg-azul { background: var(--azul-corp); }
+        .bg-roxo { background: #8e44ad; }
+        .bg-cinza { background: #95a5a6; }
+
+        /* FORMULÁRIO DE CUPONS */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        .form-group input { padding: 10px; border: 1px solid var(--borda); border-radius: 4px; font-size: 14px; }
+        .btn-acao { background: var(--azul-corp); color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .btn-acao:hover { background: #00509e; }
+        .btn-acao-outline { background: transparent; border: 1px solid var(--azul-corp); color: var(--azul-corp); padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;}
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Gerador de Cupons</h2>
-        <input type="text" id="codigo" placeholder="CÓDIGO (Ex: OFF20)">
-        <input type="number" id="desconto" placeholder="Desconto Ex: 0.15 para 15%">
-        <input type="number" id="limite" placeholder="Limite de usos (Ex: 5)">
-        <input type="date" id="validade">
-        <button onclick="gerarCupom()">Criar Cupom</button>
+
+    <div class="sidebar">
+        <div class="sidebar-logo">LAENGED ADMIN</div>
+        <button class="menu-btn ativo" onclick="mudarSecao('dashboard', this)">📊 Visão Geral</button>
+        <button class="menu-btn" onclick="mudarSecao('clientes', this)">🏢 Clientes (Empresas)</button>
+        <button class="menu-btn" onclick="mudarSecao('licencas', this)">🔑 Gestão de Licenças</button>
+        <button class="menu-btn" onclick="mudarSecao('cupons', this)">🎟️ Gerador de Cupons</button>
+    </div>
+
+    <div class="main-content">
+        <div class="top-header">
+            <h1 id="titulo-pagina">Visão Geral do Negócio</h1>
+            <span class="badge-admin">Módulo Administrador</span>
+        </div>
+
+        <div id="sec-dashboard" class="secao ativa">
+            <div class="grid-kpis">
+                <div class="kpi-card verde">
+                    <h3>ARR Estimado (R$/Ano)</h3>
+                    <div class="valor" id="kpi-faturamento">R$ --</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Licenças Pagas Ativas</h3>
+                    <div class="valor" id="kpi-pagas">--</div>
+                </div>
+                <div class="kpi-card laranja">
+                    <h3>Empresas Cadastradas</h3>
+                    <div class="valor" id="kpi-empresas">--</div>
+                </div>
+                <div class="kpi-card" style="border-color: #8e44ad;">
+                    <h3>Trials em Andamento</h3>
+                    <div class="valor" id="kpi-trials">--</div>
+                </div>
+            </div>
+            
+            <div class="card-table">
+                <h3 style="margin-bottom: 15px; color: var(--escuro);">Últimas Licenças Adicionadas</h3>
+                <table>
+                    <thead>
+                        <tr><th>Chave</th><th>Cliente</th><th>Tipo</th><th>Vencimento</th></tr>
+                    </thead>
+                    <tbody id="tabela-resumo">
+                        <tr><td colspan="4">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sec-clientes" class="secao">
+            <div class="card-table">
+                <table>
+                    <thead>
+                        <tr><th>Razão Social / Nome</th><th>E-mail Responsável</th><th>Total de Licenças</th></tr>
+                    </thead>
+                    <tbody id="tabela-clientes">
+                        <tr><td colspan="3">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sec-licencas" class="secao">
+            <div class="card-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Chave de Acesso</th>
+                            <th>Empresa / Cliente</th>
+                            <th>Plano</th>
+                            <th>Status Máquina</th>
+                            <th>PC Vinculado</th>
+                            <th>Vencimento</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-licencas">
+                        <tr><td colspan="6">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sec-cupons" class="secao">
+            <div class="card-table" style="max-width: 600px;">
+                <h3 style="margin-bottom: 20px; color: var(--azul-corp);">Criar Novo Cupom de Desconto</h3>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Código do Cupom</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="text" id="cupom-codigo" placeholder="Ex: VIP20" style="flex:1; text-transform: uppercase;">
+                            <button class="btn-acao-outline" onclick="gerarAleatorio()" title="Gerar Código">🎲</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Desconto (%)</label>
+                        <input type="number" id="cupom-desconto" placeholder="Ex: 15 (para 15%)" min="1" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Limite de Usos Globais</label>
+                        <input type="number" id="cupom-limite" placeholder="Ex: 5 usos">
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Expiração</label>
+                        <input type="date" id="cupom-validade">
+                    </div>
+                </div>
+                <button class="btn-acao" style="width: 100%;" onclick="revisarCupom()">Revisar e Criar Cupom</button>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 10px; font-size: 14px; color: #7f8c8d;">ÚLTIMOS CUPONS GERADOS:</h3>
+                <div id="lista-recentes"></div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        async function gerarCupom() {
-            let dados = {
-                codigo: document.getElementById('codigo').value,
-                desconto: parseFloat(document.getElementById('desconto').value),
-                limite: parseInt(document.getElementById('limite').value),
-                validade: document.getElementById('validade').value
-            };
-            const res = await fetch("https://laenged-api.onrender.com/admin/cupons", {
-                method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(dados)
-            });
-            const json = await res.json();
-            alert(json.mensagem);
+        const API_URL = "https://laenged-api.onrender.com";
+
+        // Navegação do Menu
+        function mudarSecao(idSecao, botaoClicado) {
+            document.querySelectorAll('.secao').forEach(sec => sec.classList.remove('ativa'));
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('ativo'));
+            
+            document.getElementById(`sec-${idSecao}`).classList.add('ativa');
+            botaoClicado.classList.add('ativo');
+            document.getElementById('titulo-pagina').innerText = botaoClicado.innerText.replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').trim();
+
+            // Carrega os dados dependendo da aba
+            if(idSecao === 'dashboard') carregarStats();
+            if(idSecao === 'clientes') carregarClientes();
+            if(idSecao === 'licencas') carregarTodasLicencas();
+            if(idSecao === 'cupons') carregarUltimosCupons();
         }
+
+        // === 1. CARREGAR DASHBOARD ===
+        async function carregarStats() {
+            try {
+                const res = await fetch(`${API_URL}/admin/stats`);
+                const data = await res.json();
+                if(data.status === "SUCESSO") {
+                    document.getElementById('kpi-faturamento').innerText = data.faturamento.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    document.getElementById('kpi-pagas').innerText = data.pagas;
+                    document.getElementById('kpi-empresas').innerText = data.empresas;
+                    document.getElementById('kpi-trials').innerText = data.trials;
+                }
+            } catch(e) { console.error("Erro dados financeiros"); }
+        }
+
+        // === 2. CARREGAR CLIENTES ===
+        async function carregarClientes() {
+            const tab = document.getElementById("tabela-clientes");
+            try {
+                const res = await fetch(`${API_URL}/admin/clientes`);
+                const data = await res.json();
+                tab.innerHTML = "";
+                data.dados.forEach(c => {
+                    tab.innerHTML += `<tr><td><strong>${c.razao_social}</strong></td><td>${c.email}</td><td>${c.qtd_licencas} Licença(s)</td></tr>`;
+                });
+            } catch(e) { tab.innerHTML = "<tr><td colspan='3'>Erro ao carregar clientes.</td></tr>"; }
+        }
+
+        // === 3. CARREGAR LICENÇAS TOTAIS ===
+        async function carregarTodasLicencas() {
+            const tab = document.getElementById("tabela-licencas");
+            const tabResumo = document.getElementById("tabela-resumo"); // Preenche o resumo da dashboard também
+            
+            try {
+                const res = await fetch(`${API_URL}/admin/licencas/todas`);
+                const data = await res.json();
+                tab.innerHTML = ""; tabResumo.innerHTML = "";
+                
+                data.dados.forEach((l, index) => {
+                    let corTipo = l.tipo === "TRIAL" ? "bg-roxo" : "bg-verde";
+                    let corStatus = l.status === "EM_USO" ? "bg-verde" : "bg-cinza";
+                    
+                    let linha = `<tr>
+                        <td style="font-family: monospace; font-weight:bold; color: var(--azul-corp);">${l.chave}</td>
+                        <td>${l.cliente}</td>
+                        <td><span class="badge ${corTipo}">${l.tipo}</span></td>
+                        <td><span class="badge ${corStatus}">${l.status}</span></td>
+                        <td>${l.pc}</td>
+                        <td>${l.vencimento}</td>
+                    </tr>`;
+                    
+                    tab.innerHTML += linha;
+                    if(index < 5) tabResumo.innerHTML += linha; // Só as 5 primeiras no resumo
+                });
+            } catch(e) { tab.innerHTML = "<tr><td colspan='6'>Erro.</td></tr>"; }
+        }
+
+        // === 4. LÓGICA DE CUPONS (MANTIDA) ===
+        function gerarAleatorio() {
+            const char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let cod = 'LGD-';
+            for(let i=0; i<5; i++) cod += char.charAt(Math.floor(Math.random() * char.length));
+            document.getElementById('cupom-codigo').value = cod;
+        }
+
+        function revisarCupom() {
+            let c = document.getElementById('cupom-codigo').value.toUpperCase().trim();
+            let d = document.getElementById('cupom-desconto').value;
+            let l = document.getElementById('cupom-limite').value;
+            let v = document.getElementById('cupom-validade').value;
+
+            if(!c || !d || !l || !v) return alert("Preencha tudo.");
+            let perc = parseInt(d);
+            if(perc < 1 || perc > 100) return alert("Desconto entre 1 e 100.");
+            
+            if(confirm(`Gerar cupom ${c} de ${perc}% para ${l} usos?`)) {
+                enviarCupomAPI(c, perc/100, l, v);
+            }
+        }
+
+        async function enviarCupomAPI(c, d, l, v) {
+            try {
+                const res = await fetch(`${API_URL}/admin/cupons`, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({codigo: c, desconto: d, limite: l, validade: v})
+                });
+                const json = await res.json();
+                if(json.status === "SUCESSO") {
+                    alert("Cupom Criado!");
+                    carregarUltimosCupons();
+                } else alert(json.mensagem);
+            } catch(e) { alert("Erro na API."); }
+        }
+
+        async function carregarUltimosCupons() {
+            const div = document.getElementById('lista-recentes');
+            try {
+                const res = await fetch(`${API_URL}/admin/cupons/recentes`);
+                const json = await res.json();
+                div.innerHTML = "";
+                json.dados.forEach(c => {
+                    div.innerHTML += `<div style="background:#fff; padding:10px; border:1px solid #ddd; margin-bottom:5px; border-radius:4px; display:flex; justify-content:space-between;">
+                        <strong style="color:var(--laranja-cta)">${c.codigo} (-${c.desconto_percentual*100}%)</strong>
+                        <button class="btn-acao-outline" style="padding:2px 8px; font-size:11px;" onclick="navigator.clipboard.writeText('${c.codigo}')">Copiar</button>
+                    </div>`;
+                });
+            } catch(e) { div.innerHTML = "Erro"; }
+        }
+        async function carregarPrecoBase() {
+            try {
+                const res = await fetch(`${API_URL}/config/preco`);
+                const data = await res.json();
+                if(data.status === "SUCESSO") document.getElementById('admin-preco-base').value = data.preco;
+            } catch(e) {}
+        }
+
+        async function atualizarPrecoBase() {
+            let novoPreco = parseFloat(document.getElementById('admin-preco-base').value);
+            if(!novoPreco || novoPreco <= 0) return alert("Digite um valor válido.");
+            
+            if(confirm(`Alterar o preço do software para R$ ${novoPreco}? O portal de vendas será atualizado na mesma hora.`)) {
+                try {
+                    const res = await fetch(`${API_URL}/admin/config/preco`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ preco: novoPreco })
+                    });
+                    const data = await res.json();
+                    alert(data.mensagem);
+                    carregarStats(); // Atualiza os cards financeiros
+                } catch(e) { alert("Erro ao atualizar."); }
+            }
+        }
+        
+        // Coloque essa chamada dentro do seu window.onload atual:
+        window.onload = () => { carregarStats(); carregarTodasLicencas(); carregarPrecoBase(); };
+        // Inicia a dashboard ao carregar a página
+        window.onload = () => { carregarStats(); carregarTodasLicencas(); };
     </script>
 </body>
 </html>
