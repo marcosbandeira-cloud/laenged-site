@@ -43,6 +43,7 @@
         .auth-links a:hover { text-decoration: underline; }
 
         #registro-box { display: none; }
+        #verificacao-box { display: none; } /* Oculto por padrão */
 
         /* ================= DASHBOARD ================= */
         #dashboard-screen { display: none; }
@@ -140,6 +141,23 @@
             
             <div class="auth-links">
                 <p>Já tem uma conta? <a onclick="alternarTelaAuth('login')">Fazer Login</a></p>
+            </div>
+        </div>
+
+        <div id="verificacao-box" class="auth-box">
+            <img src="logo.png" alt="LAENGED Logo">
+            <h2 style="margin-bottom: 10px; font-size: 20px; color: var(--escuro);">Confirme seu E-mail</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Enviamos um código de 6 dígitos para o e-mail informado. Digite-o abaixo para liberar sua licença.</p>
+            
+            <div class="form-group">
+                <label>Código de Verificação</label>
+                <input type="text" id="codigo-verificacao" placeholder="Ex: 123456" style="text-align: center; font-size: 20px; letter-spacing: 5px; font-weight: bold;">
+            </div>
+            
+            <button class="btn-auth" id="btn-validar-codigo" onclick="validarCodigo()">Validar e Acessar</button>
+            
+            <div class="auth-links">
+                <p>Não recebeu? <a onclick="alternarTelaAuth('registro')">Tentar novamente</a></p>
             </div>
         </div>
 
@@ -245,11 +263,15 @@
 
         // === CONTROLE DE TELAS ===
         function alternarTelaAuth(tela) {
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('registro-box').style.display = 'none';
+            document.getElementById('verificacao-box').style.display = 'none';
+
             if(tela === 'registro') {
-                document.getElementById('login-box').style.display = 'none';
                 document.getElementById('registro-box').style.display = 'block';
+            } else if(tela === 'verificacao') {
+                document.getElementById('verificacao-box').style.display = 'block';
             } else {
-                document.getElementById('registro-box').style.display = 'none';
                 document.getElementById('login-box').style.display = 'block';
             }
         }
@@ -293,6 +315,10 @@
                     localStorage.setItem('laenged_empresa_id', data.empresa_id);
                     localStorage.setItem('laenged_empresa_nome', data.nome_empresa);
                     abrirDashboard();
+                } else if (data.status === "PENDENTE") {
+                    alert("⚠️ " + data.mensagem);
+                    document.getElementById('reg-email').value = email; // Preenche para verificação
+                    alternarTelaAuth('verificacao');
                 } else {
                     alert("❌ " + data.mensagem);
                 }
@@ -309,7 +335,7 @@
             const senha = document.getElementById('reg-senha').value.trim();
             if(!empresa || !email || !senha) return alert("Preencha todos os campos.");
 
-            document.getElementById('btn-fazer-registro').innerText = "Aguarde...";
+            document.getElementById('btn-fazer-registro').innerText = "Enviando código para o e-mail...";
             document.getElementById('btn-fazer-registro').disabled = true;
 
             try {
@@ -320,9 +346,8 @@
                 const data = await res.json();
 
                 if (data.status === "SUCESSO") {
-                    alert("🎉 " + data.mensagem + "\n\nFaça o login agora para acessar sua chave de Teste.");
-                    alternarTelaAuth('login');
-                    document.getElementById('login-email').value = email; 
+                    alert("📨 " + data.mensagem);
+                    alternarTelaAuth('verificacao');
                 } else {
                     alert("❌ " + data.mensagem);
                 }
@@ -330,6 +355,36 @@
             finally {
                 document.getElementById('btn-fazer-registro').innerText = "Criar Conta e Iniciar Teste";
                 document.getElementById('btn-fazer-registro').disabled = false;
+            }
+        }
+
+        async function validarCodigo() {
+            const email = document.getElementById('reg-email').value.trim(); 
+            const codigo = document.getElementById('codigo-verificacao').value.trim();
+            
+            if(!codigo) return alert("Digite o código recebido.");
+
+            document.getElementById('btn-validar-codigo').innerText = "Validando...";
+            document.getElementById('btn-validar-codigo').disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/verificar`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, codigo: codigo })
+                });
+                const data = await res.json();
+
+                if (data.status === "SUCESSO") {
+                    alert("🎉 " + data.mensagem + "\n\nFaça o login agora para acessar seu portal.");
+                    alternarTelaAuth('login');
+                    document.getElementById('login-email').value = email; 
+                } else {
+                    alert("❌ " + data.mensagem);
+                }
+            } catch (e) { alert("Falha de conexão com o servidor."); } 
+            finally {
+                document.getElementById('btn-validar-codigo').innerText = "Validar e Acessar";
+                document.getElementById('btn-validar-codigo').disabled = false;
             }
         }
 
@@ -484,9 +539,9 @@
                     
                     if(json.status === "SUCESSO") {
                         alert("🎉 Pagamento Simulado Aprovado! Licenças estendidas por +1 ano.");
-                        checkboxes.forEach(chk => chk.checked = false); // Limpa as caixinhas
-                        atualizarCarrinho(); // Volta o simulador pro estado normal
-                        carregarLicencas(); // Atualiza as novas datas de 2027 na tela
+                        checkboxes.forEach(chk => chk.checked = false);
+                        atualizarCarrinho(); 
+                        carregarLicencas(); 
                     }
                 } catch(e) { alert("Falha na transação."); }
                 finally { btn.disabled = false; }
