@@ -611,9 +611,10 @@
             let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
             let precoUnitario = precoBaseGlob;
 
+            // NOVA REGRA: 2% de desconto por licença adicional (limitado até a 11ª)
             if (qtd > 1) {
                 let expoente = qtd > 11 ? 10 : (qtd - 1);
-                precoUnitario = precoBaseGlob * Math.pow(0.99, expoente); 
+                precoUnitario = precoBaseGlob * Math.pow(0.98, expoente); // 0.98 representa os 2%
             }
 
             let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
