@@ -34,14 +34,13 @@
         .btn-portal { background-color: var(--azul-corp); color: white !important; padding: 8px 15px; border-radius: 4px; }
         .btn-portal:hover { background-color: #00509e; color: white !important; }
 
-        /* ================= SEÇÃO INÍCIO (COM ANIMAÇÃO) ================= */
+        /* ================= SEÇÃO INÍCIO (HERO) ================= */
         #inicio {
             height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center;
             background: linear-gradient(135deg, rgba(0,103,192,0.9) 0%, rgba(51,51,51,0.9) 100%), url('image_5ecf1d.jpg') center/cover;
             color: white; padding: 0 20px; position: relative; overflow: hidden; margin-top: 60px;
         }
         
-        /* Animação de fundo (Malha / Grade se movendo) */
         .grid-animada {
             position: absolute; top: 0; left: 0; width: 200%; height: 200%;
             background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
@@ -54,7 +53,6 @@
         .hero-content h1 { font-size: 42px; margin-bottom: 20px; line-height: 1.2; }
         .hero-content p { font-size: 18px; margin-bottom: 40px; font-weight: 300; }
         
-        /* Novos Estilos para os Dois Botões no Hero */
         .hero-botoes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
         .btn-hero { background-color: var(--laranja-cta); color: white; padding: 15px 30px; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 5px; transition: 0.3s; }
         .btn-hero:hover { background-color: #a42600; }
@@ -73,7 +71,7 @@
         h2.section-title { font-size: 36px; color: var(--azul-corp); text-align: center; margin-bottom: 50px; }
         h2.section-title::after { content: ''; display: block; width: 60px; height: 4px; background-color: var(--laranja-cta); margin: 10px auto 0; }
 
-        /* ================= SOLUÇÕES EM ENGENHARIA (Cards) ================= */
+        /* ================= SOLUÇÕES EM ENGENHARIA ================= */
         .solucoes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .card { background: white; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.3s; }
         .card:hover { transform: translateY(-10px); }
@@ -81,12 +79,6 @@
         .card-content { padding: 25px; }
         .card-content h3 { color: var(--azul-corp); margin-bottom: 15px; }
         .card-content p { font-size: 15px; color: #555; margin-bottom: 15px; }
-
-        /* ================= PORTFÓLIO ================= */
-        .portfolio-lista { display: flex; flex-direction: column; gap: 20px; max-width: 900px; margin: 0 auto;}
-        .projeto-item { background-color: var(--cinza-claro); padding: 20px 30px; border-left: 5px solid var(--azul-corp); border-radius: 0 8px 8px 0; }
-        .projeto-item h4 { color: var(--escuro); font-size: 18px; margin-bottom: 5px; }
-        .projeto-item span { color: var(--laranja-cta); font-weight: bold; font-size: 14px;}
 
         /* ================= CONTATO ================= */
         .contato-container { max-width: 600px; margin: 0 auto; background: var(--cinza-claro); padding: 40px; border-radius: 8px; }
@@ -110,8 +102,8 @@
             <ul>
                 <li><a href="#inicio">Início</a></li>
                 <li><a href="software.html">LAENGED Batch Pro</a></li>
+                <li><a href="treinamento.html">Treinamento</a></li>
                 <li><a href="#solucoes">Gestão de Projetos & Engenharia</a></li>
-                <li><a href="#portfolio">Projetos</a></li>
                 <li><a href="#contato">Contato</a></li>
                 <li><a href="portal.html" class="btn-portal">Portal do Cliente</a></li>
             </ul>
@@ -121,12 +113,12 @@
     <section id="inicio">
         <div class="grid-animada"></div>
         <div class="hero-content">
-            <h1>Precisão que Transforma: Engenharia e Inovação de Ponta a Ponta.</h1>
-            <p>Otimize seus resultados com nossa expertise em Captura de Realidade 3D, Modelagem BIM de Tubulações, Análises de Flexibilidade e Automação CAD. Entregamos projetos mais inteligentes, seguros e eficientes.</p>
+            <h1>Precisão que Transforma: Automação e Inteligência de Ponta a Ponta.</h1>
+            <p>Otimize seus resultados com nossa tecnologia de Automação CAD, Captura de Realidade 3D e Modelagem BIM. Entregamos soluções mais inteligentes, seguras e eficientes para o seu ecossistema de engenharia.</p>
             
             <div class="hero-botoes">
-                <a href="#contato" class="btn-hero">Fale com um Especialista</a>
-                <a href="#solucoes" class="btn-hero-secundario">Conheça Nossas Soluções</a>
+                <a href="software.html" class="btn-hero">Conheça o LAENGED Batch Pro</a>
+                <a href="#contato" class="btn-hero-secundario">Fale Conosco</a>
             </div>
         </div>
     </section>
@@ -152,7 +144,7 @@
                 </div>
                 <div class="card-content">
                     <h3>Análises e Conformidade</h3>
-                    <p>Segurança inegociável em sistemas de tubulação, garantindo conformidade com ASME, API e NFPA.</p>
+                    <p>Segurança inegociável em sistemas de tubulação, garantindo conformidade com normas técnicas.</p>
                     <p>✔ Stress Analysis (CAESAR II)<br>✔ Dimensionamento Hidráulico (AFT Fathom)<br>✔ Mitigação de Golpe de Aríete (AFT Impulse)</p>
                 </div>
             </div>
@@ -163,32 +155,11 @@
                 </div>
                 <div class="card-content">
                     <h3>Captura de Realidade 3D</h3>
-                    <p>Base exata para projetos Brownfield e Greenfield através de Laser Scanning 3D e Mapeamento com Drones.</p>
+                    <p>Base exata para projetos através de Laser Scanning 3D e Mapeamento com Drones.</p>
                     <p>✔ Levantamento Topográfico LiDAR<br>✔ Escaneamento 3D As-Built<br>✔ Modelagem a partir de Nuvem de Pontos</p>
                 </div>
             </div>
 
-        </div>
-    </section>
-
-    <section id="portfolio" style="background-color: var(--cinza-claro);">
-        <h2 class="section-title">Nosso Know-How</h2>
-        <div class="portfolio-lista">
-            <div class="projeto-item">
-                <span>CSN / ANGLO AMERICAN / VALE</span>
-                <h4>Grandes Dutos e Mineração</h4>
-                <p>Projetos detalhados de Minerodutos e Rejeitodutos para filtragem.</p>
-            </div>
-            <div class="projeto-item">
-                <span>CBMM / NEXA / HORIZONTE MINERALS</span>
-                <h4>Plantas de Processo e Siderurgia</h4>
-                <p>Liderança em detalhamento de sistemas para expansões de pátio, Utilidades para Forno FE-03 (Fusão e Refino), Concentração II e Planta de Extração de Níquel no Projeto Araguaia.</p>
-            </div>
-            <div class="projeto-item">
-                <span>VALE FERTILIZANTES / CCR METRÔ</span>
-                <h4>Sistemas Auxiliares e SPCI</h4>
-                <p>Dimensionamento e elaboração de Rede de Hidrantes, água de serviço e tubulação de utilidades em conformidade com NFPA e FM Global.</p>
-            </div>
         </div>
     </section>
 
@@ -208,9 +179,9 @@
                     <label>Assunto / Interesse</label>
                     <select required>
                         <option value="">Selecione uma opção...</option>
+                        <option value="Licenciamento do Software">Licenciamento LAENGED Batch Pro</option>
                         <option value="Serviços de Engenharia (BIM, Cálculos)">Apoio Técnico em Projetos (BIM, Cálculos)</option>
                         <option value="Captura 3D (Scanner / Drone)">Captura de Realidade 3D (Scanner / Drone)</option>
-                        <option value="Auditoria de Terceiros">Auditoria e Verificação de Projetos</option>
                         <option value="Outros Assuntos">Outros Assuntos</option>
                     </select>
                 </div>

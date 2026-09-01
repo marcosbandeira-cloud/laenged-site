@@ -21,6 +21,12 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--cinza-claro); color: var(--escuro); }
+        
+        .status-ativo { background: var(--verde-sucesso); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+        .status-disponivel { background: var(--azul-info); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+        .status-trial { background: var(--roxo-trial); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+        .status-expirada { background: var(--vermelho-erro); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+
 
         /* ================= TELAS DE AUTENTICAÇÃO ================= */
         .auth-screen {
@@ -30,7 +36,7 @@
         .auth-box {
             background: var(--branco); padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             width: 100%; max-width: 400px; text-align: center;
-            max-height: 90vh; overflow-y: auto; /* Adicionado para telas menores se o form for longo */
+            max-height: 90vh; overflow-y: auto;
         }
         .auth-box img { max-width: 180px; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; text-align: left; }
@@ -54,8 +60,9 @@
         .btn-sair { background: transparent; border: 1px solid var(--escuro); padding: 5px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;}
         .btn-sair:hover { background: #eee; }
 
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+        /* AQUI A LARGURA E O GRID FORAM AUMENTADOS */
+        .container { max-width: 1350px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2.5fr 1fr; gap: 30px; }
+        @media (max-width: 1000px) { .container { grid-template-columns: 1fr; } }
 
         .card { background: var(--branco); border-radius: 8px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--borda); margin-bottom: 30px; }
         .card h2 { font-size: 20px; color: var(--azul-corp); margin-bottom: 20px; border-bottom: 2px solid var(--cinza-claro); padding-bottom: 10px; }
@@ -70,6 +77,10 @@
         
         .btn-desvincular { background-color: var(--vermelho-erro); color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 12px; font-weight: bold; transition: 0.3s;}
         .btn-desvincular:hover { background-color: #a71d2a; }
+
+        /* Estilo do novo botão de copiar */
+        .btn-copiar { background: #e1e4e8; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 8px; transition: 0.2s; color: var(--escuro); font-weight: bold;}
+        .btn-copiar:hover { background: #ced4da; }
 
         .download-area { text-align: center; padding: 20px 0; }
         .btn-download { background: var(--verde-sucesso); color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 18px; font-weight: bold; display: inline-block; transition: 0.3s;}
@@ -89,10 +100,9 @@
         .economia-badge { background: #e6f4ea; color: var(--verde-sucesso); padding: 5px 10px; border-radius: 4px; font-size: 13px; text-align: center; margin-top: 10px; border: 1px solid #c3e6cb;}
 
         .pagamento-botoes { display: flex; flex-direction: column; gap: 10px; }
-        .btn-pix { background: #32BCAD; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer;}
-        .btn-pix:hover { background: #28968a; }
-        .btn-cartao { background: var(--escuro); color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer;}
-        .btn-cartao:hover { background: #000; }
+        .btn-checkout { background: var(--escuro); color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;}
+        .btn-checkout:hover { background: #111; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15);}
+        .btn-checkout:disabled { background: #999; cursor: not-allowed; transform: none; box-shadow: none;}
     </style>
 </head>
 <body>
@@ -105,11 +115,11 @@
             
             <div class="form-group">
                 <label>E-mail (Corporativo ou Pessoal)</label>
-                <input type="email" id="login-email" placeholder="seu@email.com">
+                <input type="email" id="login-email" placeholder="seu@email.com" onkeypress="if(event.key === 'Enter') fazerLogin()">
             </div>
             <div class="form-group">
                 <label>Senha</label>
-                <input type="password" id="login-senha" placeholder="••••••••">
+                <input type="password" id="login-senha" placeholder="••••••••" onkeypress="if(event.key === 'Enter') fazerLogin()">
             </div>
             
             <button class="btn-auth" id="btn-fazer-login" onclick="fazerLogin()">Entrar no Sistema</button>
@@ -232,10 +242,10 @@
                 
                 <div class="card">
                     <h2>📥 Download do Software</h2>
-                    <p style="margin-bottom: 15px; color: #555;">Baixe a versão mais recente da LAENGED Batch Pro compatível com Windows 10/11 e AutoCAD 2019 a 2026.</p>
+                    <p style="margin-bottom: 15px; color: #555;">Baixe a versão mais recente da LAENGED Batch Pro compatível com Windows 10/11 e AutoCAD 2019 a 2027.</p>
                     <div class="download-area">
-                        <a href="#" class="btn-download">⬇ Baixar LAENGED Batch Pro v1.0</a>
-                        <p style="margin-top: 10px; font-size: 12px; color: #999;">Última atualização: 15/Mar/2026 - Tamanho: 45MB</p>
+                        <a href="https://drive.google.com/uc?export=download&id=12oZylgJcA8U1giHOB22VrAt6lNlY5IZT" target="_blank" class="btn-download">⬇ Baixar LAENGED Batch Pro v1.0</a>
+                        <p style="margin-top: 10px; font-size: 12px; color: #999;">Última atualização: 29/08/2026 - Tamanho: 473MB</p>
                     </div>
                 </div>
 
@@ -298,8 +308,13 @@
                     </div>
 
                     <div class="pagamento-botoes">
-                        <button class="btn-pix" id="btn-pix" onclick="processarPagamentoSimulado()">◈ Pagar com PIX (Nova Compra)</button>
-                        <button class="btn-cartao">💳 Cartão de Crédito (Até 12x)</button>
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-weight: bold; font-size: 14px; color: var(--escuro);">CPF ou CNPJ (Obrigatório):</label>
+                            <input type="text" id="input-cpf-cnpj" class="qtd-input" placeholder="Apenas números" maxlength="18">
+                        </div>
+                        
+                        <button class="btn-checkout" id="btn-checkout" onclick="iniciarCheckoutHosted()">🔒 Ir para Pagamento Seguro</button>
+                        <p style="font-size: 11px; color: #666; text-align: center; margin-top: 5px;">Pague via <b>PIX, Boleto ou Cartão de Crédito</b>. Liberação imediata após a aprovação.</p>
                     </div>
                 </div>
             </div>
@@ -310,7 +325,7 @@
     <script>
         const API_URL = "https://laenged-api.onrender.com";
         let descontoCupomAtivo = 0; 
-        let precoBaseGlob = 0.00; // NOVO: Preço dinâmico que virá do banco
+        let precoBaseGlob = 0.00;
 
         // === CONTROLE DE TELAS ===
         function alternarTelaAuth(tela) {
@@ -349,7 +364,7 @@
 
         window.onload = () => {
             if (localStorage.getItem('laenged_empresa_id')) abrirDashboard();
-            carregarPrecoDoBanco(); // NOVO: Busca o preço do banco ao abrir a página
+            carregarPrecoDoBanco(); 
         };
 
         // === API: LOGIN & REGISTRO ===
@@ -371,6 +386,7 @@
                 if (data.status === "SUCESSO") {
                     localStorage.setItem('laenged_empresa_id', data.empresa_id);
                     localStorage.setItem('laenged_empresa_nome', data.nome_empresa);
+                    localStorage.setItem('laenged_email', email); // Guarda o email para o checkout
                     abrirDashboard();
                 } else if (data.status === "PENDENTE") {
                     alert("⚠️ " + data.mensagem);
@@ -511,6 +527,24 @@
             }
         }
 
+        // === NOVA FUNÇÃO PARA COPIAR A CHAVE ===
+        function copiarChave(chave, btnElement) {
+            navigator.clipboard.writeText(chave).then(() => {
+                let textoOriginal = btnElement.innerHTML;
+                btnElement.innerHTML = "✅ Copiado!";
+                btnElement.style.background = "var(--verde-sucesso)";
+                btnElement.style.color = "white";
+                
+                setTimeout(() => {
+                    btnElement.innerHTML = textoOriginal;
+                    btnElement.style.background = "#e1e4e8";
+                    btnElement.style.color = "var(--escuro)";
+                }, 2000);
+            }).catch(err => {
+                alert("Falha ao copiar. Tente selecionar o texto manualmente.");
+            });
+        }
+
         // === API: CARREGAR LICENÇAS E INSERIR CHECKBOXES ===
         async function carregarLicencas() {
             const empresa_id = localStorage.getItem('laenged_empresa_id');
@@ -529,24 +563,44 @@
                         let isTrial = licenca.tipo === "TRIAL";
                         let badgeTipo = isTrial ? `<span class="status-trial">TRIAL 5 DIAS</span>` : `<span class="status-ativo">PAGO</span>`;
                         
-                        let corStatus = licenca.status === "EM_USO" ? "status-ativo" : "status-disponivel";
-                        let textoStatus = licenca.status === "EM_USO" ? "Em Uso" : "Livre";
+                        // NOVA LÓGICA: Verifica se a data de hoje é maior que a data de vencimento
+                        let dataVencimento = new Date(licenca.vencimento + "T23:59:59");
+                        let hoje = new Date();
+                        let expirada = hoje > dataVencimento;
+
+                        let corStatus = "";
+                        let textoStatus = "";
+
+                        // Se estiver expirada, força o status vermelho, independente do banco
+                        if (expirada) {
+                            corStatus = "status-expirada";
+                            textoStatus = "Expirada";
+                        } else {
+                            corStatus = licenca.status === "EM_USO" ? "status-ativo" : "status-disponivel";
+                            textoStatus = licenca.status === "EM_USO" ? "Em Uso" : "Livre";
+                        }
+
                         let comp = licenca.pc && licenca.pc !== "Nenhum" ? licenca.pc : "-";
                         
                         let botaoAcao = "-";
-                        if (licenca.status === "EM_USO") {
+                        if (expirada) {
+                            botaoAcao = "<span style='color:var(--vermelho-erro); font-size:11px; font-weight:bold;'>Vencida</span>";
+                        } else if (licenca.status === "EM_USO") {
                             botaoAcao = isTrial ? "<span style='color:#999; font-size:11px;'>Intransferível</span>" : `<button class="btn-desvincular" onclick="desvincular('${licenca.chave}')">Desvincular</button>`;
                         }
 
                         let checkbox = isTrial ? `<input type="checkbox" disabled title="Trials não são renováveis">` : `<input type="checkbox" class="chk-renovar" value="${licenca.chave}" onchange="atualizarCarrinho()">`;
+                        
+                        // Botão de Copiar
+                        let btnCopiar = `<button class="btn-copiar" onclick="copiarChave('${licenca.chave}', this)" title="Copiar Chave">📋 Copiar</button>`;
 
                         let linha = `
                             <tr>
-                                <td>${checkbox} <strong>${licenca.chave}</strong></td>
+                                <td style="white-space: nowrap;">${checkbox} <strong>${licenca.chave}</strong> ${btnCopiar}</td>
                                 <td>${badgeTipo}</td>
                                 <td><span class="${corStatus}">${textoStatus}</span></td>
                                 <td>${comp}</td>
-                                <td>${licenca.vencimento}</td>
+                                <td style="white-space: nowrap;">${licenca.vencimento}</td>
                                 <td>${botaoAcao}</td>
                             </tr>
                         `;
@@ -560,19 +614,20 @@
         function atualizarCarrinho() {
             let checkboxes = document.querySelectorAll('.chk-renovar:checked');
             let inputQtd = document.getElementById('qtd-licencas');
+            let btnCheckout = document.getElementById('btn-checkout');
             
             if (checkboxes.length > 0) {
                 inputQtd.value = checkboxes.length;
                 inputQtd.disabled = true;
-                document.getElementById('btn-pix').innerText = "🔄 Renovar Selecionadas (PIX)";
+                btnCheckout.innerText = "🔒 Ir para Pagamento (Renovação)";
             } else {
                 inputQtd.disabled = false;
-                document.getElementById('btn-pix').innerText = "◈ Pagar com PIX (Nova Compra)";
+                btnCheckout.innerText = "🔒 Ir para Pagamento (Nova Compra)";
             }
             calcularPreco();
         }
 
-        // === API: PREÇOS E CUPONS (NOVO) ===
+        // === API: PREÇOS E CUPONS ===
         async function carregarPrecoDoBanco() {
             try {
                 const res = await fetch(`${API_URL}/config/preco`);
@@ -606,15 +661,14 @@
         }
 
         function calcularPreco() {
-            if (precoBaseGlob === 0) return; // Aguarda o preço chegar da API
+            if (precoBaseGlob === 0) return; 
 
             let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
             let precoUnitario = precoBaseGlob;
 
-            // NOVA REGRA: 2% de desconto por licença adicional (limitado até a 11ª)
             if (qtd > 1) {
                 let expoente = qtd > 11 ? 10 : (qtd - 1);
-                precoUnitario = precoBaseGlob * Math.pow(0.98, expoente); // 0.98 representa os 2%
+                precoUnitario = precoBaseGlob * Math.pow(0.98, expoente); 
             }
 
             let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
@@ -655,35 +709,61 @@
             } catch (erro) { alert("Erro ao tentar falar com o servidor."); }
         }
 
-        // === SIMULAR RENOVAÇÃO / COMPRA NO BANCO ===
-        async function processarPagamentoSimulado() {
+        // === INTEGRAÇÃO COM GATEWAY (CHECKOUT HOSTED) ===
+        async function iniciarCheckoutHosted() {
             let checkboxes = document.querySelectorAll('.chk-renovar:checked');
             let empresa_id = localStorage.getItem('laenged_empresa_id');
-            let btn = document.getElementById('btn-pix');
+            let email_cliente = localStorage.getItem('laenged_email');
+            
+            let cpfCnpjRaw = document.getElementById('input-cpf-cnpj').value;
+            let cpfCnpjFormatado = cpfCnpjRaw.replace(/\D/g, ''); 
+
+            if (!cpfCnpjFormatado || cpfCnpjFormatado.length < 11) {
+                return alert("⚠️ Por favor, informe um CPF ou CNPJ válido para gerar a fatura.");
+            }
+
+            let cupom = document.getElementById('input-cupom').value.toUpperCase().trim();
+            let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
+            let btn = document.getElementById('btn-checkout');
+
+            let chavesParaRenovar = [];
+            let tipoTransacao = "NOVA_COMPRA";
 
             if (checkboxes.length > 0) {
-                let chavesParaRenovar = Array.from(checkboxes).map(chk => chk.value);
-                
-                btn.innerText = "Processando Renovação...";
-                btn.disabled = true;
+                chavesParaRenovar = Array.from(checkboxes).map(chk => chk.value);
+                tipoTransacao = "RENOVACAO";
+            }
 
-                try {
-                    const res = await fetch(`${API_URL}/webhook/renovar`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ empresa_id: parseInt(empresa_id), chaves: chavesParaRenovar, tempo_dias: 365 })
-                    });
-                    const json = await res.json();
-                    
-                    if(json.status === "SUCESSO") {
-                        alert("🎉 Pagamento Simulado Aprovado! Licenças estendidas por +1 ano.");
-                        checkboxes.forEach(chk => chk.checked = false);
-                        atualizarCarrinho(); 
-                        carregarLicencas(); 
-                    }
-                } catch(e) { alert("Falha na transação."); }
-                finally { btn.disabled = false; }
-            } else {
-                alert("Simulação de nova compra. Aqui o Webhook de pagamento integraria com o Asaas/MercadoPago para criar NOVAS chaves.");
+            btn.innerText = "Gerando Link Seguro...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/checkout/iniciar`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        empresa_id: parseInt(empresa_id), 
+                        email: email_cliente,
+                        qtd_licencas: qtd,
+                        tipo: tipoTransacao,
+                        chaves_renovacao: chavesParaRenovar,
+                        cupom: cupom,
+                        cpf_cnpj: cpfCnpjFormatado
+                    })
+                });
+                const json = await res.json();
+                
+                if(json.status === "SUCESSO" && json.url_checkout) {
+                    window.location.href = json.url_checkout;
+                } else {
+                    alert("⚠️ " + (json.mensagem || "Erro ao gerar link de pagamento."));
+                    btn.innerText = "🔒 Ir para Pagamento Seguro";
+                    btn.disabled = false;
+                }
+            } catch(e) { 
+                alert("Falha de comunicação com o servidor financeiro. Tente novamente em instantes."); 
+                btn.innerText = "🔒 Ir para Pagamento Seguro";
+                btn.disabled = false;
             }
         }
     </script>

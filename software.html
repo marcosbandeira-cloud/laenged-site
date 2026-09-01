@@ -11,7 +11,9 @@
             --laranja-cta: #d83b01;
             --verde-sucesso: #107c10;
             --escuro: #333333;
-            --cinza-claro: #f9f9f9;
+            --cinza-claro: #f4f7f6;
+            --azul-info: #17a2b8;
+            --borda: #e1e4e8;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -34,14 +36,13 @@
         .btn-portal { background-color: var(--azul-corp); color: white !important; padding: 8px 15px; border-radius: 4px; }
         .btn-portal:hover { background-color: #00509e; color: white !important; }
 
-        /* ================= HERO SECTION (Apresentação do Software) ================= */
+        /* ================= HERO SECTION ================= */
         .hero-software {
             margin-top: 60px;
             background: linear-gradient(135deg, #001f3f 0%, var(--azul-corp) 100%);
             color: white; padding: 80px 50px; display: flex; align-items: center; justify-content: space-between; gap: 40px;
         }
         .hero-text { flex: 1; max-width: 600px; }
-        /* Título um pouco menor caso o novo texto seja mais longo */
         .hero-text h1 { font-size: 38px; margin-bottom: 20px; line-height: 1.2; }
         .hero-text p { font-size: 18px; margin-bottom: 30px; font-weight: 300; opacity: 0.9; }
         .hero-image { flex: 1; text-align: right; }
@@ -53,7 +54,6 @@
         .btn-manual { background-color: transparent; color: white; border: 2px solid white; padding: 13px 25px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; transition: 0.3s; display: inline-block; margin-left: 15px;}
         .btn-manual:hover { background-color: rgba(255,255,255,0.1); }
 
-        /* Responsividade básica para a Hero Section */
         @media (max-width: 992px) {
             .hero-software { flex-direction: column; text-align: center; padding: 60px 20px; }
             .hero-text, .hero-image { flex: none; width: 100%; max-width: 100%; }
@@ -61,35 +61,42 @@
             .btn-manual { margin-left: 0; margin-top: 15px; }
         }
 
-        /* ================= SEÇÃO DE VÍDEO EXPLICATIVO ================= */
-        .video-section { padding: 80px 50px; background-color: white; text-align: center; }
-        .video-section h2 { font-size: 32px; color: var(--azul-corp); margin-bottom: 15px; }
-        .video-section p { color: #666; margin-bottom: 40px; font-size: 18px; }
+        /* ================= SEÇÃO DE TRÊS MÓDULOS TÉCNICOS ================= */
+        .modules-section { padding: 80px 50px; background-color: white; }
+        .modules-section h2 { font-size: 32px; color: var(--azul-corp); text-align: center; margin-bottom: 15px; }
+        .modules-section > p { text-align: center; color: #666; margin-bottom: 50px; font-size: 18px; max-width: 800px; margin-left: auto; margin-right: auto; }
         
-        .video-container {
-            position: relative; max-width: 900px; margin: 0 auto;
-            padding-bottom: 56.25%; /* Proporção 16:9 para YouTube */
-            height: 0; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            background-color: #000;
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        
+        .module-card {
+            background: var(--cinza-claro); border-radius: 8px; border: 1px solid var(--borda);
+            padding: 35px 30px; display: flex; flex-direction: column; position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: 0.3s;
         }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .module-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        
+        /* Cores temáticas para os módulos */
+        .card-batch { border-top: 5px solid var(--azul-corp); }
+        .card-layers { border-top: 5px solid var(--verde-sucesso); }
+        .card-estruturas { border-top: 5px solid var(--laranja-cta); }
 
-        /* ================= FUNCIONALIDADES (Grid) ================= */
-        .features-section { padding: 80px 50px; }
-        .features-section h2 { font-size: 32px; color: var(--azul-corp); text-align: center; margin-bottom: 50px; }
-        
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .feature-card { background: white; padding: 30px; border-radius: 8px; border-top: 4px solid var(--verde-sucesso); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .feature-card h3 { font-size: 20px; color: var(--escuro); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;}
-        .feature-card p { color: #555; font-size: 15px; }
-        
-        /* ================= SEÇÃO DE PREÇOS (Teaser para o Portal) ================= */
-        .pricing-section { background-color: white; padding: 60px 50px; text-align: center; }
+        .module-header { display: flex; justify-content: center; align-items: center; margin-bottom: 25px; height: 60px; }
+        .module-logo-img { max-height: 55px; max-width: 100%; object-fit: contain; }
+
+        .module-card h3 { font-size: 22px; color: var(--escuro); margin-bottom: 12px; }
+        .module-card p.description { font-size: 14px; color: #666; margin-bottom: 20px; min-height: 60px; }
+
+        .feature-list { list-style: none; padding-top: 15px; border-top: 1px dashed var(--borda); }
+        .feature-list li { font-size: 14px; color: #444; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; }
+        .feature-list li span.check { color: var(--verde-sucesso); font-weight: bold; }
+
+        /* ================= SEÇÃO DE PREÇOS ================= */
+        .pricing-section { background-color: var(--cinza-claro); padding: 70px 50px; text-align: center; border-top: 1px solid var(--borda); }
         .pricing-section h2 { font-size: 28px; color: var(--azul-corp); margin-bottom: 20px; }
         .pricing-section p { max-width: 700px; margin: 0 auto 30px; color: #555; font-size: 16px; }
         
         /* ================= FOOTER ================= */
-        footer { background-color: var(--escuro); color: white; text-align: center; padding: 20px; font-size: 14px; margin-top: 40px;}
+        footer { background-color: var(--escuro); color: white; text-align: center; padding: 20px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -102,8 +109,7 @@
             <ul>
                 <li><a href="index.html">Início</a></li>
                 <li><a href="software.html" class="active-link">LAENGED Batch Pro</a></li>
-                <li><a href="index.html#solucoes">Gestão de Projetos & Engenharia</a></li>
-                <li><a href="index.html#portfolio">Projetos</a></li>
+                <li><a href="treinamento.html">Treinamento</a></li>
                 <li><a href="index.html#contato">Contato</a></li>
                 <li><a href="portal.html" class="btn-portal">Portal do Cliente</a></li>
             </ul>
@@ -113,11 +119,11 @@
     <section class="hero-software">
         <div class="hero-text">
             <h1>Foco no que realmente importa: a inteligência do seu projeto.</h1>
-            <p>O LAENGED Batch Pro é a plataforma desenvolvida para potencializar o dia a dia de desenhistas, projetistas, engenheiros e coordenadores. Automatize edições em lote no AutoCAD, blinde seus projetos contra erros de preenchimento de dados e permita que sua equipe dedique seu talento ao design e à inovação, deixando o trabalho operacional e repetitivo para a tecnologia.</p>
+            <p>O LAENGED Batch Pro é a suite desenvolvida para potencializar a engenharia. Automatize rotinas em lote no AutoCAD, padronize pranchas e blinde seus projetos contra erros, deixando o trabalho repetitivo para nossos motores inteligentes.</p>
             
             <div style="margin-top: 20px;">
                 <a href="portal.html" class="btn-action">Assinar Agora (Portal)</a>
-                <a href="Manual_LAENGED Batch Pro.pdf" target="_blank" class="btn-manual">📥 Baixar Manual de Instruções</a>
+                <a href="treinamento.html" class="btn-manual">▶ Assistir Aulas</a>
             </div>
         </div>
         <div class="hero-image">
@@ -125,58 +131,67 @@
         </div>
     </section>
 
-    <section class="video-section">
-        <h2>Veja o Robô em Ação</h2>
-        <p>Assista ao nosso vídeo explicativo e descubra como processar centenas de arquivos em minutos.</p>
-        
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/SEU_CODIGO_AQUI?rel=0" title="Vídeo Explicativo LAENGED Batch Pro" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-    </section>
+    <!-- TRÊS MÓDULOS COM LOGOS PNG -->
+    <section class="modules-section">
+        <h2>Arquitetura Modular do Sistema</h2>
+        <p>Dividido em três pilares especialistas que rodam de forma nativa e silenciosa para garantir velocidade extrema e 100% de sigilo nos seus arquivos DWG.</p>
 
-    <section class="features-section">
-        <h2>Recursos Técnicos do Sistema</h2>
-        <div class="features-grid">
+        <div class="modules-grid">
             
-            <div class="feature-card">
-                <h3 style="color: var(--laranja-cta);">📊 Auditoria QA com IA</h3>
-                <p>Nossa inteligência cruza automaticamente as notas de continuidade, referências gerais e carimbos dos desenhos (DWG) diretamente com a sua Planilha MDR de referência. Elimine furos de projeto antes de enviar ao cliente.</p>
+            <!-- MÓDULO 1: BATCH -->
+            <div class="module-card card-batch">
+                <div class="module-header">
+                    <img src="BATCH.png" alt="Módulo BATCH" class="module-logo-img">
+                </div>
+                <h3>Motor de Automação Massiva</h3>
+                <p class="description">Processamento sequencial de rotinas pesadas em pacotes inteiros de pranchas, eliminando o trabalho manual e repetitivo.</p>
+                <ul class="feature-list">
+                    <li><span class="check">✔</span> <b>Tratamento Z-Axis:</b> Nivelamento de geometria (Flatten) para eliminar erros de Snap.</li>
+                    <li><span class="check">✔</span> <b>Purge & Audit Silencioso:</b> Limpeza profunda de resíduos e remoção automática de arquivos <code>.BAK</code>.</li>
+                    <li><span class="check">✔</span> <b>Injeção de Carimbo:</b> Atualização em lote de datas, emissões e atributos de blocos.</li>
+                    <li><span class="check">✔</span> <b>Gestão de Arquivos:</b> Mapeamento de subpastas e exportação da árvore para Excel.</li>
+                </ul>
             </div>
 
-            <div class="feature-card">
-                <h3 style="color: var(--laranja-cta);">🔄 Gestão de Revisões (Batch)</h3>
-                <p>O sistema extrai os parâmetros atuais dos arquivos, cria uma matriz em Excel para o gestor definir os novos status (Emissão Inicial, Aprovado, Cancelado) e injeta as novas revisões em todo o pacote simultaneamente.</p>
+            <!-- MÓDULO 2: LAYERS -->
+            <div class="module-card card-layers">
+                <div class="module-header">
+                    <img src="LAYERS.png" alt="Módulo LAYERS" class="module-logo-img">
+                </div>
+                <h3>Governança e Normatização CAD</h3>
+                <p class="description">Auditoria rigorosa de camadas e propriedades visuais para garantir que 100% das pranchas sigam a norma do cliente.</p>
+                <ul class="feature-list">
+                    <li><span class="check">✔</span> <b>Padronização de Layers:</b> Mapeamento e conversão de camadas fora da norma da empresa.</li>
+                    <li><span class="check">✔</span> <b>Ajuste de Propriedades:</b> Conversão forçada de cores, espessuras e tipos de linha para <i>ByLayer</i>.</li>
+                    <li><span class="check">✔</span> <b>Purge Seletivo:</b> Expurgador inteligente de layers ocultas, desligadas ou não utilizadas.</li>
+                    <li><span class="check">✔</span> <b>Normalização de Prefixos:</b> Reorganização padronizada do dicionário de camadas do acervo.</li>
+                </ul>
             </div>
 
-            <div class="feature-card">
-                <h3 style="color: var(--laranja-cta);">🔍 Localizar e Substituir Avançado</h3>
-                <p>Altere Tags de tubulação, textos de projeto ou numerações de equipamento em centenas de arquivos de uma só vez, com relatórios completos do que foi alterado gerados automaticamente em Excel.</p>
-            </div>
-
-            <div class="feature-card">
-                <h3 style="color: var(--laranja-cta);">📑 Motor PDF e Limpeza CAD</h3>
-                <p>Gere PDFs automáticos diretamente dos Layouts ou Models, aplique penas (CTB) e execute rotinas silenciosas de PURGE, remoção de lixo (.BAK) e nivelamento do Eixo Z para arquivos mais leves.</p>
-            </div>
-
-            <div class="feature-card">
-                <h3 style="color: var(--laranja-cta);">🏷️ Renomeador em Lote Inteligente</h3>
-                <p>Padronize a nomenclatura do seu pacote de entrega em segundos. Adicione prefixos, sufixos, remova trechos específicos ou crie sequências numéricas automáticas em toda a sua pasta de projetos.</p>
-            </div>
-
-            <div class="feature-card">
-                <h3 style="color: var(--laranja-cta);">✂️ Unificação e Separação (Merge/Split)</h3>
-                <p>Junte dezenas de folhas DWG soltas em um único arquivo mestre de forma coordenada, ou faça o inverso: separe projetos complexos em folhas individuais. Excelente também para a união de cadernos em PDF.</p>
+            <!-- MÓDULO 3: ESTRUTURAS -->
+            <div class="module-card card-estruturas">
+                <div class="module-header">
+                    <img src="ESTRUTURAS.png" alt="Módulo ESTRUTURAS" class="module-logo-img">
+                </div>
+                <h3>Cérebro de QA e Regras de Negócio</h3>
+                <p class="description">Inteligência avançada que cruza os desenhos DWG com a sua Matriz de Referência (MDR) em Excel para auditoria de engenharia.</p>
+                <ul class="feature-list">
+                    <li><span class="check">✔</span> <b>Auditoria de Continuidades:</b> Validação cruzada de notas de continuidade e referências de projeto.</li>
+                    <li><span class="check">✔</span> <b>Localizar & Substituir:</b> Alteração de Tags, códigos de tubulação/equipamentos e textos estruturados.</li>
+                    <li><span class="check">✔</span> <b>Módulo de Separação:</b> Fragmentação e desmembramento automático de pranchas e arquivos base.</li>
+                    <li><span class="check">✔</span> <b>Validação MDR:</b> Relatórios automáticos em Excel apontando furos e inconsistências no projeto.</li>
+                </ul>
             </div>
 
         </div>
     </section>
 
     <section class="pricing-section">
-        <h2>Licenciamento Corporativo (Modelo de Assinatura)</h2>
+        <h2>Licenciamento Corporativo (Assinatura Anual)</h2>
         <p>
-            O software roda localmente, garantindo <strong>100% de segurança e sigilo</strong> para os arquivos DWG do seu projeto. Oferecemos uma política de <strong>Tiered Pricing (Preço Escalonado)</strong>: quanto mais licenças sua equipe de engenharia precisar, menor será o custo unitário. Toda a gestão de assinaturas, adição de máquinas e cálculo de descontos pró-rata por tempo é feita automaticamente em nosso Portal de Clientes.
+            O software roda localmente na sua máquina, garantindo <strong>100% de segurança e privacidade</strong> para os arquivos do seu projeto. Oferecemos <strong>Preço Escalonado (Tiered Pricing)</strong>: quanto mais licenças sua equipe precisar, menor será o custo unitário. Toda a gestão de máquinas e licenças é feita no nosso Portal.
         </p>
-        <a href="portal.html" class="btn-action" style="background-color: var(--verde-sucesso);">Acessar Portal e Calcular Plano</a>
+        <a href="portal.html" class="btn-action" style="background-color: var(--verde-sucesso);">Acessar Portal e Adquirir</a>
     </section>
 
     <footer>
