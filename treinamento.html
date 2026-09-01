@@ -209,13 +209,19 @@
         <!-- ÁREA PRINCIPAL DO VÍDEO -->
         <main class="main-content">
             <div class="video-wrapper">
-                <!-- IFRAME CORRIGIDO COM O LINK DA AULA 1 -->
-                <iframe id="player-video" src="https://www.youtube.com/embed/0nSGAHEsk6w?si=8YRzee03E2-5fXPr" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <!-- AQUI: O iframe principal carrega a Aula 1 já sugerindo HD1080p -->
+                <iframe id="player-video" src="https://www.youtube.com/embed/0nSGAHEsk6w?si=8YRzee03E2-5fXPr&vq=hd1080" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
 
             <div class="conteudo-aula">
                 <span id="tag-modulo" class="tag-modulo">SECÇÃO 1: Início e Organização</span>
                 <h1 id="titulo-aula">Introdução ao Sistema</h1>
+                
+                <!-- O AVISO DE OURO PARA EDUCAR O USUÁRIO E FORÇAR A LEITURA HD -->
+                <p style="font-size: 13px; color: var(--laranja-cta); font-weight: bold; margin-bottom: 10px; background-color: #fff3ed; padding: 10px; border-left: 4px solid var(--laranja-cta); border-radius: 4px;">
+                    ⚙️ Dica: Para ver os textos e configurações do AutoCAD com nitidez, clique na engrenagem do player de vídeo e mude a Qualidade para 1080p (HD).
+                </p>
+
                 <p id="desc-aula">Visão geral do LAENGED Batch Pro, primeiros passos e como o sistema funciona por trás das câmeras para garantir a segurança dos seus DWGs.</p>
             </div>
         </main>
@@ -235,14 +241,15 @@
             document.getElementById('titulo-aula').innerText = tituloAula;
             document.getElementById('desc-aula').innerText = descricaoAula;
 
-            // 3. Atualiza o Iframe do YouTube com inteligência para o link
+            // 3. Atualiza o Iframe do YouTube com inteligência para o link e qualidade HD
             const iframe = document.getElementById('player-video');
             
             // Verifica se a URL já tem um '?' (como o ?si=...). 
-            // Se tiver, usa '&' para o autoplay. Se não tiver, usa '?'.
+            // Se tiver, usa '&' para o autoplay e vq. Se não tiver, usa '?'.
             let separador = urlVideo.includes('?') ? '&' : '?';
             
-            iframe.src = urlVideo + separador + "autoplay=1";
+            // Injeta o Autoplay para rodar na hora do clique e sugere a qualidade 1080p
+            iframe.src = urlVideo + separador + "autoplay=1&vq=hd1080";
         }
 
         // Função para recolher/expandir os módulos no menu lateral
