@@ -161,13 +161,36 @@
                 </div>
                 
                 <div class="card-table" style="margin-bottom: 30px; border-left: 4px solid #333;">
-                    <h3 style="color: var(--escuro); margin-bottom: 10px;">⚙️ Configuração de Preços</h3>
-                    <div style="display: flex; gap: 15px; align-items: flex-end;">
-                        <div>
-                            <label style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Preço Base Anual (R$)</label>
-                            <input type="number" id="admin-preco-base" step="0.01" style="padding: 10px; width: 150px; font-size: 18px; font-weight: bold; color: var(--azul-corp);">
+                    <h3 style="color: var(--escuro); margin-bottom: 15px;">⚙️ Configuração de Preços Anuais (R$)</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                        
+                        <!-- Full Suite -->
+                        <div style="background: #f8f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
+                            <label style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px;">🚀 Full Suite (Combo)</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="number" id="admin-preco-full" step="0.01" style="padding: 8px; width: 100%; font-size: 16px; font-weight: bold; color: var(--azul-corp);">
+                                <button class="btn-acao" onclick="atualizarPrecoModulo('FULL', 'admin-preco-full')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
+                            </div>
                         </div>
-                        <button class="btn-acao" onclick="atualizarPrecoBase()" style="background-color: var(--escuro);">Salvar Novo Preço</button>
+
+                        <!-- Módulo Batch -->
+                        <div style="background: #f8f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
+                            <label style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px;">⚙️ Módulo Batch & Layers</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="number" id="admin-preco-batch" step="0.01" style="padding: 8px; width: 100%; font-size: 16px; font-weight: bold; color: var(--azul-corp);">
+                                <button class="btn-acao" onclick="atualizarPrecoModulo('BATCH', 'admin-preco-batch')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
+                            </div>
+                        </div>
+
+                        <!-- Módulo Estruturas -->
+                        <div style="background: #f8f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
+                            <label style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px;">🏗️ Módulo Estruturas</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="number" id="admin-preco-estruturas" step="0.01" style="padding: 8px; width: 100%; font-size: 16px; font-weight: bold; color: var(--azul-corp);">
+                                <button class="btn-acao" onclick="atualizarPrecoModulo('ESTRUTURAS', 'admin-preco-estruturas')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -441,20 +464,33 @@
             try {
                 const res = await fetch(`${API_URL}/config/preco`);
                 const data = await res.json();
-                if(data.status === "SUCESSO") document.getElementById('admin-preco-base').value = data.preco;
-            } catch(e) {}
+                if(data.status === "SUCESSO") {
+                    // Preenche os 3 campos com os dados que vêm da nova API
+                    document.getElementById('admin-preco-full').value = data.precos.FULL;
+                    document.getElementById('admin-preco-batch').value = data.precos.BATCH;
+                    document.getElementById('admin-preco-estruturas').value = data.precos.ESTRUTURAS;
+                }
+            } catch(e) { console.log("Erro ao buscar preços", e); }
         }
 
-        async function atualizarPrecoBase() {
-            let novoPreco = parseFloat(document.getElementById('admin-preco-base').value);
+        async function atualizarPrecoModulo(produto, idInput) {
+            let novoPreco = parseFloat(document.getElementById(idInput).value);
             if(!novoPreco || novoPreco <= 0) return alert("Digite um valor válido.");
-            if(confirm(`Alterar o preço do software para R$ ${novoPreco}?`)) {
+            
+            if(confirm(`Tem certeza que deseja alterar o preço do módulo ${produto} para R$ ${novoPreco.toFixed(2)}?`)) {
                 try {
-                    const res = await fetch(`${API_URL}/admin/config/preco`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ preco: novoPreco }) });
+                    const res = await fetch(`${API_URL}/admin/config/preco`, { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        // Envia na mochila o nome do produto e o preço correspondente
+                        body: JSON.stringify({ produto: produto, preco: novoPreco }) 
+                    });
                     const data = await res.json();
                     alert(data.mensagem);
-                    carregarStats(); 
-                } catch(e) { }
+                    carregarStats(); // Atualiza o faturamento estimado lá em cima
+                } catch(e) { 
+                    alert("Falha ao comunicar com o servidor.");
+                }
             }
         }
     </script>

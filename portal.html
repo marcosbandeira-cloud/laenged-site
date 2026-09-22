@@ -279,6 +279,16 @@
                     <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Assinatura válida por 12 meses. O desconto em cascata (volume) é aplicado automaticamente.</p>
                     
                     <div class="simulador-box">
+                        <!-- NOVO: Seletor de Módulo -->
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-weight: bold; font-size: 14px; color: var(--escuro);">Escolha o Pacote / Módulo:</label>
+                            <select id="tipo-produto" class="qtd-input" style="margin-top: 5px; cursor: pointer; border-color: var(--azul-corp); background-color: white;" onchange="calcularPreco()">
+                                <option value="FULL">🚀 Full Suite (Batch + Layers + Estruturas)</option>
+                                <option value="BATCH">⚙️ Módulo Produtividade (Apenas Batch + Layers)</option>
+                                <option value="ESTRUTURAS">🏗️ Módulo Engenharia (Apenas Estruturas)</option>
+                            </select>
+                        </div>
+
                         <label style="font-weight: bold; font-size: 14px;">Quantidade de Licenças:</label>
                         <input type="number" id="qtd-licencas" class="qtd-input" value="1" min="1" max="100" onchange="calcularPreco()" onkeyup="calcularPreco()">
                         
@@ -325,26 +335,48 @@
     <script>
         const API_URL = "https://laenged-api.onrender.com";
         let descontoCupomAtivo = 0; 
-        let precoBaseGlob = 0.00;
+        // NOVO: Agora guardamos os 3 preços separadamente!
+        let precosGlobais = { "BATCH": 200.0, "ESTRUTURAS": 300.0, "FULL": 420.0 };
 
-        // === CONTROLE DE TELAS ===
-        function alternarTelaAuth(tela) {
-            document.getElementById('login-box').style.display = 'none';
-            document.getElementById('registro-box').style.display = 'none';
-            document.getElementById('verificacao-box').style.display = 'none';
-            document.getElementById('recuperar-solicitar-box').style.display = 'none';
-            document.getElementById('recuperar-redefinir-box').style.display = 'none';
+        async function carregarPrecoDoBanco() {
+            try {
+                const res = await fetch(`${API_URL}/config/preco`);
+                const data = await res.json();
+                if(data.status === "SUCESSO") {
+                    precosGlobais = data.precos;
+                    calcularPreco(); 
+                }
+            } catch(e) { console.log("Erro ao buscar preços."); }
+        }
 
-            if(tela === 'registro') {
-                document.getElementById('registro-box').style.display = 'block';
-            } else if(tela === 'verificacao') {
-                document.getElementById('verificacao-box').style.display = 'block';
-            } else if(tela === 'recuperar-solicitar') {
-                document.getElementById('recuperar-solicitar-box').style.display = 'block';
-            } else if(tela === 'recuperar-redefinir') {
-                document.getElementById('recuperar-redefinir-box').style.display = 'block';
+        function calcularPreco() {
+            let produtoSelecionado = document.getElementById('tipo-produto').value;
+            let precoBaseAtual = precosGlobais[produtoSelecionado] || 420.0;
+
+            let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
+            let precoUnitario = precoBaseAtual;
+
+            if (qtd > 1) {
+                let expoente = qtd > 11 ? 10 : (qtd - 1);
+                precoUnitario = precoBaseAtual * Math.pow(0.98, expoente); 
+            }
+
+            let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
+            let valorTotal = qtd * precoComCupom;
+
+            let totalSemDesconto = precoBaseAtual * qtd;
+            let economiaReal = totalSemDesconto - valorTotal;
+            let porcentagemEconomia = (economiaReal / totalSemDesconto) * 100;
+
+            document.getElementById('valor-unitario-base-display').innerText = precoBaseAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('valor-unitario-display').innerText = precoComCupom.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('valor-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            if (economiaReal > 0) {
+                document.getElementById('area-economia').style.display = 'block';
+                document.getElementById('mensagem-desconto').innerHTML = `🔥 Você economizou <b>${economiaReal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b> (${porcentagemEconomia.toFixed(2)}%)`;
             } else {
-                document.getElementById('login-box').style.display = 'block';
+                document.getElementById('area-economia').style.display = 'none';
             }
         }
 
@@ -724,14 +756,28 @@
 
             let cupom = document.getElementById('input-cupom').value.toUpperCase().trim();
             let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
+            let produtoSelecionado = document.getElementById('tipo-produto').value;
             let btn = document.getElementById('btn-checkout');
 
             let chavesParaRenovar = [];
             let tipoTransacao = "NOVA_COMPRA";
+            let chaveBaseCoterm = "";
 
             if (checkboxes.length > 0) {
                 chavesParaRenovar = Array.from(checkboxes).map(chk => chk.value);
-                tipoTransacao = "RENOVACAO";
+                
+                // MÁGICA: Se ele selecionou uma chave e o produto for diferente, ativamos o Co-terming (Pro-rata)
+                if (checkboxes.length === 1) {
+                    let confirmacao = confirm("Você selecionou 1 licença existente. Deseja alinhar o vencimento do novo módulo escolhido com a data desta licença (Pagamento Proporcional)?\n\n• Clique em [OK] para Alinhar (Adicionar Novo Módulo).\n• Clique em [CANCELAR] para fazer uma Renovação Normal (+1 ano).");
+                    if (confirmacao) {
+                        tipoTransacao = "COTERM";
+                        chaveBaseCoterm = chavesParaRenovar[0];
+                    } else {
+                        tipoTransacao = "RENOVACAO";
+                    }
+                } else {
+                    tipoTransacao = "RENOVACAO";
+                }
             }
 
             btn.innerText = "Gerando Link Seguro...";
@@ -746,6 +792,8 @@
                         email: email_cliente,
                         qtd_licencas: qtd,
                         tipo: tipoTransacao,
+                        produto: produtoSelecionado,
+                        chave_base: chaveBaseCoterm,
                         chaves_renovacao: chavesParaRenovar,
                         cupom: cupom,
                         cpf_cnpj: cpfCnpjFormatado
