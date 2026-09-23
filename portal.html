@@ -336,7 +336,7 @@
         const API_URL = "https://laenged-api.onrender.com";
         let descontoCupomAtivo = 0; 
         let precosGlobais = { "BATCH": 200.0, "ESTRUTURAS": 300.0, "FULL": 420.0 };
-        let statusGlobais = { "BATCH": true, "ESTRUTURAS": false, "FULL": false }; // Variável nova
+        let statusGlobais = { "BATCH": true, "ESTRUTURAS": false, "FULL": false };
 
         async function carregarPrecoDoBanco() {
             try {
@@ -345,32 +345,37 @@
                 if(data.status === "SUCESSO") {
                     precosGlobais = data.precos;
                     statusGlobais = data.disponibilidade;
-                    calcularPreco(); 
                 }
-            } catch(e) { console.log("Erro ao buscar configurações."); }
+            } catch(e) { 
+                console.log("Erro ao buscar configurações."); 
+            }
+            calcularPreco(); 
         }
 
         function calcularPreco() {
             let produtoSelecionado = document.getElementById('tipo-produto').value;
             let btnCheckout = document.getElementById('btn-checkout');
             
-            // MÁGICA DO LANÇAMENTO: Se o módulo estiver bloqueado no Admin, tranca o processo!
-            if (!statusGlobais[produtoSelecionado]) {
-                document.getElementById('valor-unitario-base-display').innerHTML = "<span style='color: var(--vermelho-erro); font-weight: bold;'>Aguarde o lançamento ou atualização!</span>";
+            let moduloAtivo = statusGlobais[produtoSelecionado];
+            if (moduloAtivo === undefined) moduloAtivo = true;
+
+            if (!moduloAtivo) {
+                document.getElementById('valor-unitario-base-display').innerHTML = "<span style='color: var(--vermelho-erro); font-weight: bold;'>Aguarde o lançamento!</span>";
                 document.getElementById('valor-unitario-display').innerText = "Indisponível";
                 document.getElementById('valor-total').innerText = "Indisponível";
                 document.getElementById('area-economia').style.display = 'none';
                 
                 btnCheckout.innerText = "🔒 Módulo não disponível no momento";
                 btnCheckout.disabled = true;
-                return; // Pára o cálculo aqui
+                return; // Pára o cálculo aqui!
             }
 
-            // Se estiver ativo, segue o cálculo normal
-            let precoBaseAtual = precosGlobais[produtoSelecionado] || 420.0;
-            let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
-            let precoUnitario = precoBaseAtual;
+            let precoBaseAtual = parseFloat(precosGlobais[produtoSelecionado]) || 420.0;
+            let qtdInput = document.getElementById('qtd-licencas').value;
+            let qtd = parseInt(qtdInput);
+            if (isNaN(qtd) || qtd < 1) qtd = 1;
 
+            let precoUnitario = precoBaseAtual;
             if (qtd > 1) {
                 let expoente = qtd > 11 ? 10 : (qtd - 1);
                 precoUnitario = precoBaseAtual * Math.pow(0.98, expoente); 
@@ -378,6 +383,7 @@
 
             let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
             let valorTotal = qtd * precoComCupom;
+
             let totalSemDesconto = precoBaseAtual * qtd;
             let economiaReal = totalSemDesconto - valorTotal;
             let porcentagemEconomia = (economiaReal / totalSemDesconto) * 100;
@@ -393,8 +399,14 @@
                 document.getElementById('area-economia').style.display = 'none';
             }
 
-            // Garante que o botão volta a ser ativado se o módulo estiver livre
-            atualizarCarrinho(); // Retoma o texto e estado natural do botão
+            // Atualiza o texto do botão SEM chamar o carrinho (Evita o Loop Infinito)
+            let checkboxes = document.querySelectorAll('.chk-renovar:checked');
+            btnCheckout.disabled = false;
+            if (checkboxes.length > 0) {
+                btnCheckout.innerText = "🔒 Ir para Pagamento (Renovação / Co-Terming)";
+            } else {
+                btnCheckout.innerText = "🔒 Ir para Pagamento (Nova Compra)";
+            }
         }
 
         function abrirDashboard() {
@@ -663,16 +675,15 @@
         function atualizarCarrinho() {
             let checkboxes = document.querySelectorAll('.chk-renovar:checked');
             let inputQtd = document.getElementById('qtd-licencas');
-            let btnCheckout = document.getElementById('btn-checkout');
             
             if (checkboxes.length > 0) {
                 inputQtd.value = checkboxes.length;
                 inputQtd.disabled = true;
-                btnCheckout.innerText = "🔒 Ir para Pagamento (Renovação)";
             } else {
                 inputQtd.disabled = false;
-                btnCheckout.innerText = "🔒 Ir para Pagamento (Nova Compra)";
             }
+            
+            // Aqui ele chama o cálculo UMA única vez
             calcularPreco();
         }
 
