@@ -161,33 +161,42 @@
                 </div>
                 
                 <div class="card-table" style="margin-bottom: 30px; border-left: 4px solid #333;">
-                    <h3 style="color: var(--escuro); margin-bottom: 15px;">⚙️ Configuração de Preços Anuais (R$)</h3>
+                    <h3 style="color: var(--escuro); margin-bottom: 15px;">⚙️ Configuração de Preços e Lançamentos (R$)</h3>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
                         
                         <!-- Full Suite -->
                         <div style="background: #f8f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
                             <label style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px;">🚀 Full Suite (Combo)</label>
+                            <label style="font-size: 12px; color: var(--verde-sucesso); display: flex; align-items: center; gap: 5px; margin-bottom: 10px; cursor: pointer;">
+                                <input type="checkbox" id="admin-status-full"> Liberar para cliente
+                            </label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <input type="number" id="admin-preco-full" step="0.01" style="padding: 8px; width: 100%; font-size: 16px; font-weight: bold; color: var(--azul-corp);">
-                                <button class="btn-acao" onclick="atualizarPrecoModulo('FULL', 'admin-preco-full')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
+                                <button class="btn-acao" onclick="atualizarPrecoModulo('FULL', 'admin-preco-full', 'admin-status-full')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
                             </div>
                         </div>
 
                         <!-- Módulo Batch -->
                         <div style="background: #f8f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
                             <label style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px;">⚙️ Módulo Batch & Layers</label>
+                            <label style="font-size: 12px; color: var(--verde-sucesso); display: flex; align-items: center; gap: 5px; margin-bottom: 10px; cursor: pointer;">
+                                <input type="checkbox" id="admin-status-batch" checked> Liberar para cliente
+                            </label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <input type="number" id="admin-preco-batch" step="0.01" style="padding: 8px; width: 100%; font-size: 16px; font-weight: bold; color: var(--azul-corp);">
-                                <button class="btn-acao" onclick="atualizarPrecoModulo('BATCH', 'admin-preco-batch')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
+                                <button class="btn-acao" onclick="atualizarPrecoModulo('BATCH', 'admin-preco-batch', 'admin-status-batch')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
                             </div>
                         </div>
 
                         <!-- Módulo Estruturas -->
                         <div style="background: #f8f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
                             <label style="font-size: 12px; font-weight: bold; color: #555; display: block; margin-bottom: 5px;">🏗️ Módulo Estruturas</label>
+                            <label style="font-size: 12px; color: var(--verde-sucesso); display: flex; align-items: center; gap: 5px; margin-bottom: 10px; cursor: pointer;">
+                                <input type="checkbox" id="admin-status-estruturas"> Liberar para cliente
+                            </label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <input type="number" id="admin-preco-estruturas" step="0.01" style="padding: 8px; width: 100%; font-size: 16px; font-weight: bold; color: var(--azul-corp);">
-                                <button class="btn-acao" onclick="atualizarPrecoModulo('ESTRUTURAS', 'admin-preco-estruturas')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
+                                <button class="btn-acao" onclick="atualizarPrecoModulo('ESTRUTURAS', 'admin-preco-estruturas', 'admin-status-estruturas')" style="background-color: var(--escuro); padding: 8px 12px;">Salvar</button>
                             </div>
                         </div>
                         
@@ -465,29 +474,34 @@
                 const res = await fetch(`${API_URL}/config/preco`);
                 const data = await res.json();
                 if(data.status === "SUCESSO") {
-                    // Preenche os 3 campos com os dados que vêm da nova API
                     document.getElementById('admin-preco-full').value = data.precos.FULL;
                     document.getElementById('admin-preco-batch').value = data.precos.BATCH;
                     document.getElementById('admin-preco-estruturas').value = data.precos.ESTRUTURAS;
+                    
+                    document.getElementById('admin-status-full').checked = data.disponibilidade.FULL;
+                    document.getElementById('admin-status-batch').checked = data.disponibilidade.BATCH;
+                    document.getElementById('admin-status-estruturas').checked = data.disponibilidade.ESTRUTURAS;
                 }
-            } catch(e) { console.log("Erro ao buscar preços", e); }
+            } catch(e) { console.log("Erro ao buscar configurações", e); }
         }
 
-        async function atualizarPrecoModulo(produto, idInput) {
+        async function atualizarPrecoModulo(produto, idInput, idStatus) {
             let novoPreco = parseFloat(document.getElementById(idInput).value);
+            let isAtivo = document.getElementById(idStatus).checked;
+            let msgStatus = isAtivo ? "LIBERADO" : "BLOQUEADO";
+
             if(!novoPreco || novoPreco <= 0) return alert("Digite um valor válido.");
             
-            if(confirm(`Tem certeza que deseja alterar o preço do módulo ${produto} para R$ ${novoPreco.toFixed(2)}?`)) {
+            if(confirm(`Tem certeza que deseja atualizar o módulo ${produto}?\nPreço: R$ ${novoPreco.toFixed(2)}\nStatus: ${msgStatus}`)) {
                 try {
                     const res = await fetch(`${API_URL}/admin/config/preco`, { 
                         method: 'POST', 
                         headers: { 'Content-Type': 'application/json' }, 
-                        // Envia na mochila o nome do produto e o preço correspondente
-                        body: JSON.stringify({ produto: produto, preco: novoPreco }) 
+                        body: JSON.stringify({ produto: produto, preco: novoPreco, ativo: isAtivo }) 
                     });
                     const data = await res.json();
                     alert(data.mensagem);
-                    carregarStats(); // Atualiza o faturamento estimado lá em cima
+                    carregarStats(); 
                 } catch(e) { 
                     alert("Falha ao comunicar com o servidor.");
                 }
