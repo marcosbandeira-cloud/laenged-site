@@ -335,8 +335,8 @@
     <script>
         const API_URL = "https://laenged-api.onrender.com";
         let descontoCupomAtivo = 0; 
-        // NOVO: Agora guardamos os 3 preços separadamente!
         let precosGlobais = { "BATCH": 200.0, "ESTRUTURAS": 300.0, "FULL": 420.0 };
+        let statusGlobais = { "BATCH": true, "ESTRUTURAS": false, "FULL": false }; // Variável nova
 
         async function carregarPrecoDoBanco() {
             try {
@@ -344,15 +344,30 @@
                 const data = await res.json();
                 if(data.status === "SUCESSO") {
                     precosGlobais = data.precos;
+                    statusGlobais = data.disponibilidade;
                     calcularPreco(); 
                 }
-            } catch(e) { console.log("Erro ao buscar preços."); }
+            } catch(e) { console.log("Erro ao buscar configurações."); }
         }
 
         function calcularPreco() {
             let produtoSelecionado = document.getElementById('tipo-produto').value;
-            let precoBaseAtual = precosGlobais[produtoSelecionado] || 420.0;
+            let btnCheckout = document.getElementById('btn-checkout');
+            
+            // MÁGICA DO LANÇAMENTO: Se o módulo estiver bloqueado no Admin, tranca o processo!
+            if (!statusGlobais[produtoSelecionado]) {
+                document.getElementById('valor-unitario-base-display').innerHTML = "<span style='color: var(--vermelho-erro); font-weight: bold;'>Aguarde o lançamento ou atualização!</span>";
+                document.getElementById('valor-unitario-display').innerText = "Indisponível";
+                document.getElementById('valor-total').innerText = "Indisponível";
+                document.getElementById('area-economia').style.display = 'none';
+                
+                btnCheckout.innerText = "🔒 Módulo não disponível no momento";
+                btnCheckout.disabled = true;
+                return; // Pára o cálculo aqui
+            }
 
+            // Se estiver ativo, segue o cálculo normal
+            let precoBaseAtual = precosGlobais[produtoSelecionado] || 420.0;
             let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
             let precoUnitario = precoBaseAtual;
 
@@ -363,7 +378,6 @@
 
             let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
             let valorTotal = qtd * precoComCupom;
-
             let totalSemDesconto = precoBaseAtual * qtd;
             let economiaReal = totalSemDesconto - valorTotal;
             let porcentagemEconomia = (economiaReal / totalSemDesconto) * 100;
@@ -378,6 +392,9 @@
             } else {
                 document.getElementById('area-economia').style.display = 'none';
             }
+
+            // Garante que o botão volta a ser ativado se o módulo estiver livre
+            atualizarCarrinho(); // Retoma o texto e estado natural do botão
         }
 
         function abrirDashboard() {
