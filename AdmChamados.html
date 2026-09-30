@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Suporte - LAENGED</title>
+    <style>
+        /* Paleta de Cores e Estilos Básicos */
+        :root {
+            --azul-corp: #0067c0;
+            --laranja-cta: #d83b01;
+            --verde-sucesso: #107c10;
+            --escuro: #333333;
+            --cinza-claro: #f4f6f8;
+            --branco: #ffffff;
+            --borda: #e1e4e8;
+            --vermelho-erro: #dc3545;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--cinza-claro); color: var(--escuro); }
+
+        /* Login Suporte */
+        #login-screen {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #2b2b2b 0%, var(--escuro) 100%);
+        }
+        .login-box {
+            background: var(--branco); padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%; max-width: 400px; text-align: center;
+        }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid var(--borda); border-radius: 4px; font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--laranja-cta); }
+        .btn-auth { width: 100%; background: var(--laranja-cta); color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s; margin-top: 10px;}
+        .btn-auth:hover { background: #b33000; }
+
+        /* Dashboard Suporte */
+        #dashboard-screen { display: none; }
+        .topbar { background: var(--branco); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .topbar h1 { font-size: 20px; color: var(--escuro); }
+        .btn-sair { background: transparent; border: 1px solid var(--escuro); padding: 5px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;}
+        .btn-sair:hover { background: #eee; }
+
+        .container { max-width: 1400px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+        
+        .card { background: var(--branco); border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--borda); }
+        .card h2 { font-size: 18px; color: var(--escuro); margin-bottom: 20px; border-bottom: 2px solid var(--cinza-claro); padding-bottom: 10px; }
+
+        /* Fila de Atendimento */
+        .ticket-item { background: var(--branco); border: 1px solid var(--borda); padding: 15px; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; border-left: 4px solid transparent; }
+        .ticket-item:hover { background: var(--cinza-claro); }
+        
+        .status-badge { padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 10px; color: white; }
+        .badge-aberto { background: var(--vermelho-erro); }
+        .badge-analise { background: var(--laranja-cta); }
+        .badge-concluido, .badge-respondido { background: var(--verde-sucesso); }
+
+        .ticket-item.aberto { border-left-color: var(--vermelho-erro); }
+        .ticket-item.analise { border-left-color: var(--laranja-cta); }
+        .ticket-item.concluido, .ticket-item.respondido { border-left-color: var(--verde-sucesso); }
+
+        /* Painel de Resposta */
+        .detalhe-chamado { background: var(--cinza-claro); padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .detalhe-chamado p { margin-bottom: 5px; font-size: 13px; color: #555; }
+        .detalhe-chamado strong { color: var(--escuro); }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN DO SUPORTE -->
+    <div id="login-screen">
+        <div class="login-box">
+            <h2 style="color: var(--laranja-cta); margin-bottom: 5px;">LAENGED Suporte</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 25px;">Acesso restrito à equipe de atendimento.</p>
+            
+            <div class="form-group">
+                <label>E-mail do Atendente</label>
+                <input type="email" id="login-email" placeholder="nome@suporte.com" onkeypress="if(event.key === 'Enter') fazerLogin()">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="login-senha" placeholder="••••••••" onkeypress="if(event.key === 'Enter') fazerLogin()">
+            </div>
+            
+            <button class="btn-auth" id="btn-login" onclick="fazerLogin()">Acessar Painel</button>
+        </div>
+    </div>
+
+    <!-- TELA DE ATENDIMENTO -->
+    <div id="dashboard-screen">
+        <header class="topbar">
+            <h1>LAENGED | Central de Suporte</h1>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="text-align: right;">
+                    <span id="nome-atendente" style="display: block; font-weight: bold; font-size: 14px;">Carregando...</span>
+                    <span style="font-size: 12px; color: var(--laranja-cta);">Equipe de Atendimento</span>
+                </div>
+                <button class="btn-sair" onclick="sair()">Sair</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Fila de Tickets -->
+            <div class="card" style="height: 80vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 style="margin: 0; border: none; padding: 0;">📋 Fila de Chamados</h2>
+                    <button onclick="carregarFila()" style="background:none; border:none; cursor:pointer; color:var(--azul-corp); font-size:14px;">🔄 Atualizar</button>
+                </div>
+                <div id="lista-chamados">
+                    <p style="text-align:center; color: #888;">Buscando chamados...</p>
+                </div>
+            </div>
+
+            <!-- Área de Trabalho / Resposta -->
+            <div class="card">
+                <h2>✍️ Área de Trabalho</h2>
+                
+                <div id="painel-vazio" style="text-align: center; color: #999; margin-top: 50px;">
+                    <p>⬅ Selecione um chamado na fila para iniciar o atendimento.</p>
+                </div>
+
+                <div id="painel-resposta" style="display: none;">
+                    <div class="detalhe-chamado">
+                        <p>Ticket ID: <strong id="ticket-id" style="font-size: 16px; color: var(--azul-corp);">#000</strong></p>
+                        <p>Empresa: <strong id="ticket-empresa">---</strong></p>
+                        <p>Módulo/Assunto: <strong id="ticket-assunto">---</strong></p>
+                        <p>Abertura: <strong id="ticket-data">---</strong></p>
+                        <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+                        <p style="font-size: 15px; color: var(--escuro); line-height: 1.5;" id="ticket-descricao">Descrição do problema...</p>
+                    </div>
+
+                    <input type="hidden" id="input-id-chamado">
+                    
+                    <div class="form-group">
+                        <label>Status do Atendimento</label>
+                        <select id="input-status">
+                            <option value="ABERTO">🔴 Aberto (Não Iniciado)</option>
+                            <option value="EM_ANALISE">🟠 Em Análise (Aguardando Retorno/Dev)</option>
+                            <option value="RESPONDIDO">🟢 Respondido (Aguardando Cliente)</option>
+                            <option value="CONCLUIDO">✅ Concluído (Resolvido)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sua Resposta para o Cliente</label>
+                        <textarea id="input-resposta" rows="8" placeholder="Prezado cliente, informamos que..."></textarea>
+                    </div>
+
+                    <button class="btn-auth" id="btn-enviar" onclick="enviarResposta()">📩 Salvar e Enviar Resposta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://laenged-api.onrender.com";
+
+        window.onload = () => {
+            if (localStorage.getItem('laenged_suporte_id')) {
+                abrirPainel();
+            }
+        };
+
+        function abrirPainel() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard-screen').style.display = 'block';
+            document.getElementById('nome-atendente').innerText = localStorage.getItem('laenged_suporte_nome');
+            carregarFila();
+        }
+
+        function sair() {
+            localStorage.removeItem('laenged_suporte_id');
+            localStorage.removeItem('laenged_suporte_nome');
+            location.reload();
+        }
+
+        async function fazerLogin() {
+            let email = document.getElementById('login-email').value.trim();
+            let senha = document.getElementById('login-senha').value.trim();
+            if(!email || !senha) return alert("Preencha e-mail e senha.");
+
+            let btn = document.getElementById('btn-login');
+            btn.innerText = "Validando..."; btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/admin/equipe/login`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, senha: senha })
+                });
+                const data = await res.json();
+
+                if (data.status === "SUCESSO") {
+                    // Guarda as informações de quem está logado
+                    localStorage.setItem('laenged_suporte_id', data.id);
+                    localStorage.setItem('laenged_suporte_nome', data.nome);
+                    abrirPainel();
+                } else {
+                    alert("❌ " + data.mensagem);
+                }
+            } catch(e) { alert("Erro de conexão com a API."); }
+            finally { btn.innerText = "Acessar Painel"; btn.disabled = false; }
+        }
+
+        async function carregarFila() {
+            let divLista = document.getElementById('lista-chamados');
+            divLista.innerHTML = "<p style='text-align:center; color:#888;'>Atualizando...</p>";
+
+            try {
+                const res = await fetch(`${API_URL}/admin/chamados/todos`);
+                const json = await res.json();
+                
+                if(json.status === "SUCESSO") {
+                    if(json.dados.length === 0) return divLista.innerHTML = `<p style="text-align:center;">Fila vazia. Excelente trabalho!</p>`;
+                    
+                    divLista.innerHTML = "";
+                    json.dados.forEach(c => {
+                        let classeCard = c.status === 'ABERTO' ? 'aberto' : (c.status === 'EM_ANALISE' ? 'analise' : 'concluido');
+                        let badgeCor = c.status === 'ABERTO' ? 'badge-aberto' : (c.status === 'EM_ANALISE' ? 'badge-analise' : 'badge-concluido');
+                        let dadosSeguros = btoa(unescape(encodeURIComponent(JSON.stringify(c))));
+                        
+                        divLista.innerHTML += `
+                            <div class="ticket-item ${classeCard}" onclick="selecionarChamado('${dadosSeguros}')">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                    <strong style="font-size: 14px;">#${c.id} - ${c.empresa}</strong>
+                                    <span class="status-badge ${badgeCor}">${c.status.replace("_", " ")}</span>
+                                </div>
+                                <p style="font-size: 12px; color: #555;">Assunto: ${c.tipo_chamado.toUpperCase()}</p>
+                                <p style="font-size: 11px; color: #999; margin-top: 5px;">📅 ${c.data_abertura}</p>
+                            </div>
+                        `;
+                    });
+                }
+            } catch(e) { divLista.innerHTML = "<p>Erro ao carregar fila.</p>"; }
+        }
+
+        function selecionarChamado(dadosBase64) {
+            let c = JSON.parse(decodeURIComponent(escape(atob(dadosBase64))));
+            
+            document.getElementById('painel-vazio').style.display = 'none';
+            document.getElementById('painel-resposta').style.display = 'block';
+            
+            document.getElementById('ticket-id').innerText = "#" + c.id;
+            document.getElementById('ticket-empresa').innerText = c.empresa;
+            document.getElementById('ticket-assunto').innerText = c.tipo_chamado.toUpperCase();
+            document.getElementById('ticket-data').innerText = c.data_abertura;
+            document.getElementById('ticket-descricao').innerText = c.descricao;
+            
+            document.getElementById('input-id-chamado').value = c.id;
+            document.getElementById('input-status').value = c.status;
+            document.getElementById('input-resposta').value = c.resposta_admin ? c.resposta_admin : "";
+        }
+
+        async function enviarResposta() {
+            let id = document.getElementById('input-id-chamado').value;
+            let status = document.getElementById('input-status').value;
+            let texto = document.getElementById('input-resposta').value.trim();
+            let atendenteId = localStorage.getItem('laenged_suporte_id');
+
+            if(!texto) return alert("Por favor, digite uma resposta para o cliente.");
+
+            let btn = document.getElementById('btn-enviar');
+            btn.innerText = "Enviando..."; btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/admin/chamados/responder`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chamado_id: parseInt(id), 
+                        resposta: texto, 
+                        status: status,
+                        atendido_por_id: parseInt(atendenteId) // NOVO: Manda quem atendeu!
+                    })
+                });
+                const data = await res.json();
+                if(data.status === "SUCESSO") {
+                    alert("✅ Resposta enviada ao cliente com sucesso!");
+                    carregarFila(); 
+                } else { alert("❌ Erro: " + data.mensagem); }
+            } catch(e) { alert("Erro de conexão."); }
+            finally { btn.innerText = "📩 Salvar e Enviar Resposta"; btn.disabled = false; }
+        }
+    </script>
+</body>
+</html>
