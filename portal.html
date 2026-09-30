@@ -25,8 +25,12 @@
         .status-ativo { background: var(--verde-sucesso); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
         .status-disponivel { background: var(--azul-info); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
         .status-trial { background: var(--roxo-trial); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
-        .status-expirada { background: var(--vermelho-erro); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+        .status-expirada, .status-aberto { background: var(--vermelho-erro); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 11px;}
+        .status-analise { background: var(--laranja-cta); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 11px;}
+        .status-concluido, .status-respondido { background: var(--verde-sucesso); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 11px;}
 
+        #registro-box, #verificacao-box, #recuperar-solicitar-box, #recuperar-redefinir-box, #admin-login-box { display: none; }
+        #dashboard-screen, #chamados-screen, #admin-screen { display: none; }
 
         /* ================= TELAS DE AUTENTICAÇÃO ================= */
         .auth-screen {
@@ -41,7 +45,8 @@
         .auth-box img { max-width: 180px; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--borda); border-radius: 4px; font-size: 15px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid var(--borda); border-radius: 4px; font-size: 14px; }
+        .form-group textarea { resize: vertical; }
         .btn-auth { width: 100%; background: var(--azul-corp); color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s; margin-top: 10px;}
         .btn-auth:hover { background: #00509e; }
         .btn-auth:disabled { background: #999; cursor: not-allowed; }
@@ -49,36 +54,46 @@
         .auth-links a { color: var(--azul-corp); text-decoration: none; font-weight: 600; cursor: pointer;}
         .auth-links a:hover { text-decoration: underline; }
 
-        #registro-box, #verificacao-box, #recuperar-solicitar-box, #recuperar-redefinir-box { display: none; }
-
-        /* ================= DASHBOARD ================= */
-        #dashboard-screen { display: none; }
-        
+        /* ================= DASHBOARD & CHAMADOS ================= */
         .topbar { background: var(--branco); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .client-info { display: flex; align-items: center; gap: 15px; }
         .client-logo { width: 50px; height: 50px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #999; border: 2px solid var(--borda); overflow: hidden;}
         .btn-sair { background: transparent; border: 1px solid var(--escuro); padding: 5px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;}
         .btn-sair:hover { background: #eee; }
+        .btn-suporte { background: var(--laranja-cta); color: white; border: none; padding: 7px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s;}
+        .btn-suporte:hover { background: #a42600; }
 
-        /* AQUI A LARGURA E O GRID FORAM AUMENTADOS */
-        .container { max-width: 1350px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2.5fr 1fr; gap: 30px; }
-        @media (max-width: 1000px) { .container { grid-template-columns: 1fr; } }
+        /* APROVEITAMENTO MÁXIMO DA TELA (95% de largura) */
+        .container { max-width: 95%; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 3.5fr 1fr; gap: 30px; }
+        .container-single { max-width: 1000px; margin: 40px auto; padding: 0 20px; display: block; }
+        .container-admin { max-width: 1400px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media (max-width: 1100px) { .container, .container-admin { grid-template-columns: 1fr; } }
+        
+        .ticket-item { background: white; border: 1px solid var(--borda); padding: 15px; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: 0.2s;}
+        .ticket-item:hover { border-color: var(--azul-corp); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        
+        /* CAMPO DE USUÁRIO */
+        .input-nome-user { border: 1px dashed transparent; background: transparent; padding: 8px; font-size: 13px; color: var(--escuro); width: 100%; min-width: 140px; transition: 0.3s; border-radius: 4px; font-weight: 500;}
+        .input-nome-user:hover, .input-nome-user:focus { border-color: var(--azul-corp); background: #fff; outline: none; }
 
         .card { background: var(--branco); border-radius: 8px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--borda); margin-bottom: 30px; }
         .card h2 { font-size: 20px; color: var(--azul-corp); margin-bottom: 20px; border-bottom: 2px solid var(--cinza-claro); padding-bottom: 10px; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--borda); font-size: 14px; }
+        /* ================= TABELA COM PROPORÇÕES FIXAS ================= */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
+        th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--borda); font-size: 14px; vertical-align: middle; word-wrap: break-word; }
         th { background: var(--cinza-claro); font-weight: 600; color: var(--escuro); }
         
-        .status-ativo { background: var(--verde-sucesso); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
-        .status-disponivel { background: var(--azul-info); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
-        .status-trial { background: var(--roxo-trial); color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+        th:nth-child(1), td:nth-child(1) { width: 23%; white-space: nowrap; } 
+        th:nth-child(2), td:nth-child(2) { width: 19%; } 
+        th:nth-child(3), td:nth-child(3) { width: 10%; text-align: center; } 
+        th:nth-child(4), td:nth-child(4) { width: 9%; text-align: center; }  
+        th:nth-child(5), td:nth-child(5) { width: 16%; } 
+        th:nth-child(6), td:nth-child(6) { width: 10%; text-align: center; white-space: nowrap; } 
+        th:nth-child(7), td:nth-child(7) { width: 13%; text-align: center; }  
         
         .btn-desvincular { background-color: var(--vermelho-erro); color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 12px; font-weight: bold; transition: 0.3s;}
         .btn-desvincular:hover { background-color: #a71d2a; }
-
-        /* Estilo do novo botão de copiar */
         .btn-copiar { background: #e1e4e8; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 8px; transition: 0.2s; color: var(--escuro); font-weight: bold;}
         .btn-copiar:hover { background: #ced4da; }
 
@@ -107,6 +122,9 @@
 </head>
 <body>
 
+    <!-- ========================================== -->
+    <!-- TELA DE AUTENTICAÇÃO                       -->
+    <!-- ========================================== -->
     <div id="auth-screen" class="auth-screen">
         
         <div id="login-box" class="auth-box">
@@ -130,6 +148,26 @@
 
             <div class="auth-links">
                 <p>Ainda não tem conta? <a onclick="alternarTelaAuth('registro')">Testar Grátis por 5 Dias</a></p>
+                <p style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <a onclick="alternarTelaAuth('admin-login')" style="color: #999; font-size: 12px; font-weight: normal;">🔒 Acesso ADM</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- NOVO: Login ADM -->
+        <div id="admin-login-box" class="auth-box">
+            <h2 style="margin-bottom: 20px; font-size: 20px; color: var(--escuro);">🔒 Acesso Administrativo</h2>
+            <div class="form-group">
+                <label>E-mail ADM</label>
+                <input type="email" id="admin-email" placeholder="admin@laenged.com" onkeypress="if(event.key === 'Enter') fazerLoginAdmin()">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="admin-senha" placeholder="••••••••" onkeypress="if(event.key === 'Enter') fazerLoginAdmin()">
+            </div>
+            <button class="btn-auth" id="btn-admin-login" style="background: var(--escuro);" onclick="fazerLoginAdmin()">Acessar Painel</button>
+            <div class="auth-links">
+                <p><a onclick="alternarTelaAuth('login')">⬅ Voltar ao Portal de Cliente</a></p>
             </div>
         </div>
 
@@ -138,96 +176,53 @@
             <h2 style="margin-bottom: 10px; font-size: 20px; color: var(--escuro);">Criar Conta Gratuita</h2>
             <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Ganhe 5 dias de teste grátis com todas as funções liberadas.</p>
             
-            <div class="form-group">
-                <label>Nome (Empresa ou Pessoal)</label>
-                <input type="text" id="reg-empresa" placeholder="Seu Nome ou Empresa">
-            </div>
-            <div class="form-group">
-                <label>E-mail (Corporativo ou Pessoal)</label>
-                <input type="email" id="reg-email" placeholder="seu@email.com">
-            </div>
-            <div class="form-group">
-                <label>Criar uma Senha</label>
-                <input type="password" id="reg-senha" placeholder="Mínimo 6 caracteres">
-            </div>
-            <div class="form-group">
-                <label>Confirmar Senha</label>
-                <input type="password" id="reg-senha-confirma" placeholder="Repita sua senha">
-            </div>
+            <div class="form-group"><label>Nome (Empresa ou Pessoal)</label><input type="text" id="reg-empresa" placeholder="Seu Nome ou Empresa"></div>
+            <div class="form-group"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
+            <div class="form-group"><label>Criar uma Senha</label><input type="password" id="reg-senha" placeholder="Mínimo 6 caracteres"></div>
+            <div class="form-group"><label>Confirmar Senha</label><input type="password" id="reg-senha-confirma" placeholder="Repita sua senha"></div>
             
             <button class="btn-auth" id="btn-fazer-registro" onclick="fazerRegistro()">Criar Conta e Iniciar Teste</button>
-            
-            <div class="auth-links">
-                <p>Já tem uma conta? <a onclick="alternarTelaAuth('login')">Fazer Login</a></p>
-            </div>
+            <div class="auth-links"><p>Já tem uma conta? <a onclick="alternarTelaAuth('login')">Fazer Login</a></p></div>
         </div>
 
         <div id="verificacao-box" class="auth-box">
             <img src="logo.png" alt="LAENGED Logo">
             <h2 style="margin-bottom: 10px; font-size: 20px; color: var(--escuro);">Confirme seu E-mail</h2>
             <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Enviamos um código de 6 dígitos para o e-mail informado. Digite-o abaixo para liberar sua licença.</p>
-            
-            <div class="form-group">
-                <label>Código de Verificação</label>
-                <input type="text" id="codigo-verificacao" placeholder="Ex: 123456" style="text-align: center; font-size: 20px; letter-spacing: 5px; font-weight: bold;">
-            </div>
-            
+            <div class="form-group"><label>Código de Verificação</label><input type="text" id="codigo-verificacao" placeholder="Ex: 123456" style="text-align: center; font-size: 20px; letter-spacing: 5px; font-weight: bold;"></div>
             <button class="btn-auth" id="btn-validar-codigo" onclick="validarCodigo()">Validar e Acessar</button>
-            
-            <div class="auth-links">
-                <p>Não recebeu? <a onclick="alternarTelaAuth('registro')">Tentar novamente</a></p>
-            </div>
+            <div class="auth-links"><p>Não recebeu? <a onclick="alternarTelaAuth('registro')">Tentar novamente</a></p></div>
         </div>
 
         <div id="recuperar-solicitar-box" class="auth-box">
             <img src="logo.png" alt="LAENGED Logo">
             <h2 style="margin-bottom: 10px; font-size: 20px; color: var(--escuro);">Recuperar Senha</h2>
             <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Digite o e-mail cadastrado. Enviaremos um código para redefinir sua senha.</p>
-            
-            <div class="form-group">
-                <label>E-mail Cadastrado</label>
-                <input type="email" id="recuperar-email" placeholder="seu@email.com">
-            </div>
-            
+            <div class="form-group"><label>E-mail Cadastrado</label><input type="email" id="recuperar-email" placeholder="seu@email.com"></div>
             <button class="btn-auth" id="btn-solicitar-recuperacao" onclick="solicitarRecuperacao()">Enviar Código</button>
-            
-            <div class="auth-links">
-                <p><a onclick="alternarTelaAuth('login')">⬅ Voltar ao Login</a></p>
-            </div>
+            <div class="auth-links"><p><a onclick="alternarTelaAuth('login')">⬅ Voltar ao Login</a></p></div>
         </div>
 
         <div id="recuperar-redefinir-box" class="auth-box">
             <img src="logo.png" alt="LAENGED Logo">
             <h2 style="margin-bottom: 10px; font-size: 20px; color: var(--escuro);">Criar Nova Senha</h2>
             <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Digite o código de 6 dígitos recebido e sua nova senha.</p>
-            
-            <div class="form-group">
-                <label>Código de Recuperação</label>
-                <input type="text" id="recuperar-codigo" placeholder="Ex: 123456" style="text-align: center; font-size: 20px; letter-spacing: 5px; font-weight: bold;">
-            </div>
-            <div class="form-group">
-                <label>Nova Senha</label>
-                <input type="password" id="recuperar-nova-senha" placeholder="Mínimo 6 caracteres">
-            </div>
-            <div class="form-group">
-                <label>Confirmar Nova Senha</label>
-                <input type="password" id="recuperar-nova-senha-confirma" placeholder="Repita a nova senha">
-            </div>
-            
+            <div class="form-group"><label>Código de Recuperação</label><input type="text" id="recuperar-codigo" placeholder="Ex: 123456" style="text-align: center; font-size: 20px; letter-spacing: 5px; font-weight: bold;"></div>
+            <div class="form-group"><label>Nova Senha</label><input type="password" id="recuperar-nova-senha" placeholder="Mínimo 6 caracteres"></div>
+            <div class="form-group"><label>Confirmar Nova Senha</label><input type="password" id="recuperar-nova-senha-confirma" placeholder="Repita a nova senha"></div>
             <button class="btn-auth" id="btn-redefinir-senha" onclick="redefinirSenha()">Redefinir e Entrar</button>
-            
-            <div class="auth-links">
-                <p><a onclick="alternarTelaAuth('login')">⬅ Cancelar e voltar</a></p>
-            </div>
+            <div class="auth-links"><p><a onclick="alternarTelaAuth('login')">⬅ Cancelar e voltar</a></p></div>
         </div>
-
     </div>
 
+    <!-- ========================================== -->
+    <!-- DASHBOARD PRINCIPAL (LICENÇAS E LOJA)      -->
+    <!-- ========================================== -->
     <div id="dashboard-screen">
-        
         <header class="topbar">
-            <a href="index.html"><img src="logo.png" alt="LAENGED Logo" height="35"></a>
+            <a href="javascript:void(0)" onclick="abrirDashboard()"><img src="logo.png" alt="LAENGED Logo" height="35"></a>
             <div class="client-info">
+                <button class="btn-suporte" onclick="abrirChamados()">🎧 Suporte Técnico</button>
                 <div style="text-align: right;">
                     <span id="nome-empresa-header" style="display: block; font-weight: bold; font-size: 14px;">Carregando...</span>
                     <span style="font-size: 12px; color: #666;">Painel de Licenças</span>
@@ -239,7 +234,6 @@
 
         <div class="container">
             <div class="col-main">
-                
                 <div class="card">
                     <h2>📥 Download do Software</h2>
                     <p style="margin-bottom: 15px; color: #555;">Baixe a versão mais recente da LAENGED Batch Pro compatível com Windows 10/11 e AutoCAD 2019 a 2027.</p>
@@ -251,13 +245,13 @@
 
                 <div class="card">
                     <h2>🔑 Minhas Licenças e Dispositivos</h2>
-                    <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Selecione licenças abaixo para renová-las por mais um ano (Stacking).</p>
-                    
+                    <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Selecione licenças abaixo para renovar ou alinhar vencimentos. Edite o nome do usuário para seu controle.</p>
                     <div style="overflow-x: auto;">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Chave de Ativação</th>
+                                    <th>Usuário</th>
                                     <th>Tipo</th>
                                     <th>Status</th>
                                     <th>PC Vinculado</th>
@@ -266,7 +260,7 @@
                                 </tr>
                             </thead>
                             <tbody id="corpo-tabela">
-                                <tr><td colspan="6" style="text-align: center; color: #666;">Carregando dados...</td></tr>
+                                <tr><td colspan="7" style="text-align: center; color: #666;">Carregando dados...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -277,9 +271,7 @@
                 <div class="card">
                     <h2>🛒 Adquirir / Renovar Licenças</h2>
                     <p style="font-size: 14px; color: #555; margin-bottom: 15px;">Assinatura válida por 12 meses. O desconto em cascata (volume) é aplicado automaticamente.</p>
-                    
                     <div class="simulador-box">
-                        <!-- NOVO: Seletor de Módulo -->
                         <div style="margin-bottom: 15px;">
                             <label style="font-weight: bold; font-size: 14px; color: var(--escuro);">Escolha o Pacote / Módulo:</label>
                             <select id="tipo-produto" class="qtd-input" style="margin-top: 5px; cursor: pointer; border-color: var(--azul-corp); background-color: white;" onchange="calcularPreco()">
@@ -288,33 +280,19 @@
                                 <option value="ESTRUTURAS">🏗️ Módulo Engenharia (Apenas Estruturas)</option>
                             </select>
                         </div>
-
                         <label style="font-weight: bold; font-size: 14px;">Quantidade de Licenças:</label>
-                        <input type="number" id="qtd-licencas" class="qtd-input" value="1" min="1" max="100" onchange="calcularPreco()" onkeyup="calcularPreco()">
+                        <input type="number" id="qtd-licencas" class="qtd-input" value="1" min="1" max="100" onchange="limitarCheckboxes(null)" onkeyup="limitarCheckboxes(null)">
                         
                         <div class="cupom-area">
                             <input type="text" id="input-cupom" class="cupom-input" placeholder="CUPOM">
                             <button class="btn-aplicar" onclick="aplicarCupom()">Aplicar</button>
                         </div>
-
                         <div class="resumo-valores">
-                            <div class="linha-valor">
-                                <span>Valor Unitário Base:</span>
-                                <span id="valor-unitario-base-display">Carregando...</span>
-                            </div>
-                            <div class="linha-valor" style="color: var(--azul-corp); font-weight: bold;">
-                                <span>Valor Unitário Final:</span>
-                                <span id="valor-unitario-display">Carregando...</span>
-                            </div>
-                            <div class="linha-valor" style="margin-top: 10px;">
-                                <span style="font-size: 16px; font-weight: bold; color: var(--escuro);">TOTAL (Anual):</span>
-                                <span class="preco-destaque" id="valor-total" style="margin-bottom: 0;">Carregando...</span>
-                            </div>
+                            <div class="linha-valor"><span>Valor Unitário Base:</span><span id="valor-unitario-base-display">Carregando...</span></div>
+                            <div class="linha-valor" style="color: var(--azul-corp); font-weight: bold;"><span>Valor Unitário Final:</span><span id="valor-unitario-display">Carregando...</span></div>
+                            <div class="linha-valor" style="margin-top: 10px;"><span style="font-size: 16px; font-weight: bold; color: var(--escuro);">TOTAL (Anual):</span><span class="preco-destaque" id="valor-total" style="margin-bottom: 0;">Carregando...</span></div>
                         </div>
-                        
-                        <div id="area-economia" style="display: none;">
-                            <div class="economia-badge" id="mensagem-desconto"></div>
-                        </div>
+                        <div id="area-economia" style="display: none;"><div class="economia-badge" id="mensagem-desconto"></div></div>
                     </div>
 
                     <div class="pagamento-botoes">
@@ -322,111 +300,253 @@
                             <label style="font-weight: bold; font-size: 14px; color: var(--escuro);">CPF ou CNPJ (Obrigatório):</label>
                             <input type="text" id="input-cpf-cnpj" class="qtd-input" placeholder="Apenas números" maxlength="18">
                         </div>
-                        
                         <button class="btn-checkout" id="btn-checkout" onclick="iniciarCheckoutHosted()">🔒 Ir para Pagamento Seguro</button>
                         <p style="font-size: 11px; color: #666; text-align: center; margin-top: 5px;">Pague via <b>PIX, Boleto ou Cartão de Crédito</b>. Liberação imediata após a aprovação.</p>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- TELA DE CHAMADOS (EXCLUSIVA DO CLIENTE)    -->
+    <!-- ========================================== -->
+    <div id="chamados-screen">
+        <header class="topbar">
+            <a href="javascript:void(0)" onclick="abrirDashboard()"><img src="logo.png" alt="LAENGED Logo" height="35"></a>
+            <div class="client-info">
+                <button class="btn-sair" style="background: var(--azul-corp); color: white; border: none;" onclick="abrirDashboard()">⬅ Voltar ao Painel</button>
+                <div style="text-align: right;">
+                    <span id="nome-empresa-chamado" style="display: block; font-weight: bold; font-size: 14px;">Carregando...</span>
+                    <span style="font-size: 12px; color: #666;">Central de Suporte</span>
+                </div>
+                <div class="client-logo">LG</div>
+                <button class="btn-sair" onclick="sair()">Sair</button>
+            </div>
+        </header>
+
+        <div class="container-single">
+            <div class="card">
+                <h2 style="color: var(--laranja-cta);">🎧 Abrir Novo Chamado</h2>
+                <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Relate o seu problema ou sugestão. A nossa equipe de engenharia responderá o mais rápido possível.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                    <div>
+                        <div class="form-group">
+                            <label>Assunto / Módulo</label>
+                            <select id="tipo-chamado" class="qtd-input" style="margin-top: 5px;">
+                                <option value="">Selecione um assunto...</option>
+                                <option value="instalacao">🛠️ Erro de Instalação</option>
+                                <option value="batch">⚙️ Módulo Principal (Batch)</option>
+                                <option value="estruturas">🏗️ Módulo Estruturas</option>
+                                <option value="layers">📑 Módulo Layers</option>
+                                <option value="sugestao">💡 Sugestão de Melhoria</option>
+                                <option value="financeiro">💳 Pagamento / Financeiro</option>
+                                <option value="outros">❓ Outros / Software</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Descrição do Problema</label>
+                            <textarea id="desc-chamado" rows="6" class="qtd-input" placeholder="Descreva detalhadamente o que aconteceu..."></textarea>
+                        </div>
+                        <button class="btn-auth" style="background: var(--laranja-cta); margin-top: 0;" onclick="enviarChamado()">📩 Enviar Chamado</button>
+                    </div>
+
+                    <div style="border-left: 1px solid var(--borda); padding-left: 20px; max-height: 400px; overflow-y: auto;">
+                        <h3 style="font-size: 16px; color: var(--escuro); margin-bottom: 15px;">Histórico de Chamados</h3>
+                        <div id="historico-chamados-lista">
+                            <div style="background: var(--cinza-claro); padding: 20px; border-radius: 6px; text-align: center;">
+                                <p style="font-size: 14px; color: #888;">Você ainda não possui nenhum chamado aberto.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DASHBOARD DO ADMINISTRADOR (NOVO)          -->
+    <!-- ========================================== -->
+    <div id="admin-screen">
+        <header class="topbar">
+            <img src="logo.png" alt="LAENGED Logo" height="35">
+            <div class="client-info">
+                <div style="text-align: right;">
+                    <span style="display: block; font-weight: bold; font-size: 14px; color: var(--escuro);">Painel do Administrador</span>
+                    <span style="font-size: 12px; color: var(--laranja-cta);">Gestão de Chamados</span>
+                </div>
+                <div class="client-logo" style="background: var(--escuro); color: white;">AD</div>
+                <button class="btn-sair" onclick="sair()">Sair do ADM</button>
+            </div>
+        </header>
+
+        <div class="container-admin">
+            <div class="card" style="max-height: 75vh; overflow-y: auto;">
+                <h2 style="color: var(--escuro);">📋 Fila de Atendimento</h2>
+                <div id="admin-lista-chamados">
+                    <p style="text-align:center; color: #666;">Buscando chamados...</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 style="color: var(--laranja-cta);">✍️ Responder Chamado</h2>
+                <div id="admin-painel-resposta" style="display: none;">
+                    <div style="background: var(--cinza-claro); padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                        <p style="font-size: 12px; color: #666;">Empresa: <strong id="admin-resp-empresa" style="color: var(--escuro);">...</strong></p>
+                        <p style="font-size: 12px; color: #666;">Assunto: <strong id="admin-resp-tipo" style="color: var(--escuro);">...</strong></p>
+                        <hr style="border: 0; border-top: 1px solid var(--borda); margin: 10px 0;">
+                        <p style="font-size: 14px; color: var(--escuro);" id="admin-resp-desc">...</p>
+                    </div>
+
+                    <input type="hidden" id="admin-resp-id">
+                    
+                    <div class="form-group">
+                        <label>Alterar Status</label>
+                        <select id="admin-resp-status" class="qtd-input" style="margin-top: 5px;">
+                            <option value="ABERTO">🔴 Aberto</option>
+                            <option value="EM_ANALISE">🟠 Em Análise</option>
+                            <option value="RESPONDIDO">🟢 Respondido</option>
+                            <option value="CONCLUIDO">✅ Concluído</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sua Resposta</label>
+                        <textarea id="admin-resp-texto" rows="6" class="qtd-input" placeholder="Escreva a resposta..."></textarea>
+                    </div>
+
+                    <button class="btn-checkout" style="background: var(--verde-sucesso);" onclick="salvarRespostaAdmin()">💾 Salvar Resposta</button>
+                </div>
+                <div id="admin-aviso-selecao" style="text-align: center; color: #999; margin-top: 50px;">
+                    <p>Selecione um chamado na lista ao lado.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT PRINCIPAL                       -->
+    <!-- ========================================== -->
     <script>
         const API_URL = "https://laenged-api.onrender.com";
         let descontoCupomAtivo = 0; 
+        
         let precosGlobais = { "BATCH": 200.0, "ESTRUTURAS": 300.0, "FULL": 420.0 };
         let statusGlobais = { "BATCH": true, "ESTRUTURAS": false, "FULL": false };
 
-        async function carregarPrecoDoBanco() {
-            try {
-                const res = await fetch(`${API_URL}/config/preco`);
-                const data = await res.json();
-                if(data.status === "SUCESSO") {
-                    precosGlobais = data.precos;
-                    statusGlobais = data.disponibilidade;
-                }
-            } catch(e) { 
-                console.log("Erro ao buscar configurações."); 
-            }
-            calcularPreco(); 
-        }
-
-        function calcularPreco() {
-            let produtoSelecionado = document.getElementById('tipo-produto').value;
-            let btnCheckout = document.getElementById('btn-checkout');
-            
-            let moduloAtivo = statusGlobais[produtoSelecionado];
-            if (moduloAtivo === undefined) moduloAtivo = true;
-
-            if (!moduloAtivo) {
-                document.getElementById('valor-unitario-base-display').innerHTML = "<span style='color: var(--vermelho-erro); font-weight: bold;'>Aguarde o lançamento!</span>";
-                document.getElementById('valor-unitario-display').innerText = "Indisponível";
-                document.getElementById('valor-total').innerText = "Indisponível";
-                document.getElementById('area-economia').style.display = 'none';
-                
-                btnCheckout.innerText = "🔒 Módulo não disponível no momento";
-                btnCheckout.disabled = true;
-                return; // Pára o cálculo aqui!
-            }
-
-            let precoBaseAtual = parseFloat(precosGlobais[produtoSelecionado]) || 420.0;
-            let qtdInput = document.getElementById('qtd-licencas').value;
-            let qtd = parseInt(qtdInput);
-            if (isNaN(qtd) || qtd < 1) qtd = 1;
-
-            let precoUnitario = precoBaseAtual;
-            if (qtd > 1) {
-                let expoente = qtd > 11 ? 10 : (qtd - 1);
-                precoUnitario = precoBaseAtual * Math.pow(0.98, expoente); 
-            }
-
-            let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
-            let valorTotal = qtd * precoComCupom;
-
-            let totalSemDesconto = precoBaseAtual * qtd;
-            let economiaReal = totalSemDesconto - valorTotal;
-            let porcentagemEconomia = (economiaReal / totalSemDesconto) * 100;
-
-            document.getElementById('valor-unitario-base-display').innerText = precoBaseAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('valor-unitario-display').innerText = precoComCupom.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('valor-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-            if (economiaReal > 0) {
-                document.getElementById('area-economia').style.display = 'block';
-                document.getElementById('mensagem-desconto').innerHTML = `🔥 Você economizou <b>${economiaReal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b> (${porcentagemEconomia.toFixed(2)}%)`;
-            } else {
-                document.getElementById('area-economia').style.display = 'none';
-            }
-
-            // Atualiza o texto do botão SEM chamar o carrinho (Evita o Loop Infinito)
-            let checkboxes = document.querySelectorAll('.chk-renovar:checked');
-            btnCheckout.disabled = false;
-            if (checkboxes.length > 0) {
-                btnCheckout.innerText = "🔒 Ir para Pagamento (Renovação / Co-Terming)";
-            } else {
-                btnCheckout.innerText = "🔒 Ir para Pagamento (Nova Compra)";
-            }
+        // === CONTROLE DE TELAS ===
+        function alternarTelaAuth(tela) {
+            document.querySelectorAll('.auth-box').forEach(el => el.style.display = 'none');
+            if(tela === 'registro') document.getElementById('registro-box').style.display = 'block';
+            else if(tela === 'verificacao') document.getElementById('verificacao-box').style.display = 'block';
+            else if(tela === 'recuperar-solicitar') document.getElementById('recuperar-solicitar-box').style.display = 'block';
+            else if(tela === 'recuperar-redefinir') document.getElementById('recuperar-redefinir-box').style.display = 'block';
+            else if(tela === 'admin-login') document.getElementById('admin-login-box').style.display = 'block';
+            else document.getElementById('login-box').style.display = 'block';
         }
 
         function abrirDashboard() {
             document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('chamados-screen').style.display = 'none';
+            document.getElementById('admin-screen').style.display = 'none';
             document.getElementById('dashboard-screen').style.display = 'block';
-            document.getElementById('nome-empresa-header').innerText = localStorage.getItem('laenged_empresa_nome');
+            
+            let nomeEmpresa = localStorage.getItem('laenged_empresa_nome');
+            document.getElementById('nome-empresa-header').innerText = nomeEmpresa;
+            document.getElementById('nome-empresa-chamado').innerText = nomeEmpresa;
             carregarLicencas();
+        }
+
+        function abrirAdminPanel() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('dashboard-screen').style.display = 'none';
+            document.getElementById('chamados-screen').style.display = 'none';
+            document.getElementById('admin-screen').style.display = 'block';
+            carregarChamadosAdmin();
         }
 
         function sair() {
             localStorage.removeItem('laenged_empresa_id');
             localStorage.removeItem('laenged_empresa_nome');
+            localStorage.removeItem('laenged_is_admin');
             document.getElementById('dashboard-screen').style.display = 'none';
+            document.getElementById('chamados-screen').style.display = 'none';
+            document.getElementById('admin-screen').style.display = 'none';
             document.getElementById('auth-screen').style.display = 'flex';
+            alternarTelaAuth('login');
         }
 
         window.onload = () => {
-            if (localStorage.getItem('laenged_empresa_id')) abrirDashboard();
+            if (localStorage.getItem('laenged_is_admin') === 'true') abrirAdminPanel();
+            else if (localStorage.getItem('laenged_empresa_id')) abrirDashboard();
             carregarPrecoDoBanco(); 
         };
+
+        function abrirChamados() {
+            document.getElementById('dashboard-screen').style.display = 'none';
+            document.getElementById('admin-screen').style.display = 'none';
+            document.getElementById('chamados-screen').style.display = 'block';
+            carregarChamados(); // Puxa os dados reais da API!
+        }
+
+        async function carregarChamados() {
+            let empresa_id = localStorage.getItem('laenged_empresa_id');
+            let divHistorico = document.getElementById('historico-chamados-lista');
+            divHistorico.innerHTML = "<p style='font-size: 14px; color: #888; text-align: center;'>Buscando histórico...</p>";
+
+            try {
+                const res = await fetch(`${API_URL}/chamados/lista/${empresa_id}`);
+                const json = await res.json();
+                
+                if(json.status === "SUCESSO") {
+                    if(json.dados.length === 0) {
+                        divHistorico.innerHTML = `<div style="background: var(--cinza-claro); padding: 20px; border-radius: 6px; text-align: center;"><p style="font-size: 14px; color: #888;">Você ainda não possui nenhum chamado aberto.</p></div>`;
+                        return;
+                    }
+
+                    divHistorico.innerHTML = "";
+                    json.dados.forEach(c => {
+                        let corStatus = c.status === 'ABERTO' ? 'var(--vermelho-erro)' : (c.status === 'EM_ANALISE' ? 'var(--laranja-cta)' : 'var(--verde-sucesso)');
+                        let txtStatus = c.status.replace("_", " ");
+                        let htmlResposta = c.resposta_admin ? `<div style="margin-top: 10px; padding: 10px; background: #e6f4ea; border-left: 3px solid var(--verde-sucesso); border-radius: 4px; font-size: 12px; color: var(--escuro);"><strong>Resposta do Suporte:</strong><br>${c.resposta_admin}</div>` : "";
+                        
+                        divHistorico.innerHTML += `
+                            <div style="background: white; border: 1px solid var(--borda); padding: 15px; border-radius: 6px; margin-bottom: 10px; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <strong style="font-size: 13px; color: var(--azul-corp);">#${c.id} - ${c.tipo_chamado.toUpperCase()}</strong>
+                                    <span style="background: ${corStatus}; color: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">${txtStatus}</span>
+                                </div>
+                                <p style="font-size: 11px; color: #999; margin-bottom: 8px;">Aberto em: ${c.data_abertura}</p>
+                                ${htmlResposta}
+                            </div>
+                        `;
+                    });
+                }
+            } catch(e) { divHistorico.innerHTML = "<p style='text-align:center;'>Erro ao carregar histórico.</p>"; }
+        }
+
+        async function enviarChamado() {
+            let tipo = document.getElementById('tipo-chamado').value;
+            let desc = document.getElementById('desc-chamado').value;
+            let empresa_id = localStorage.getItem('laenged_empresa_id');
+
+            if(!tipo || !desc) return alert("Selecione um assunto e descreva o problema.");
+
+            try {
+                const res = await fetch(`${API_URL}/chamados/novo`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ empresa_id: parseInt(empresa_id), tipo_chamado: tipo, descricao: desc })
+                });
+                const data = await res.json();
+                if(data.status === "SUCESSO") {
+                    alert("✅ " + data.mensagem);
+                    document.getElementById('tipo-chamado').value = "";
+                    document.getElementById('desc-chamado').value = "";
+                    carregarChamados();
+                } else { alert("❌ Erro: " + data.mensagem); }
+            } catch(e) { alert("Falha de conexão com o servidor."); }
+        }
 
         // === API: LOGIN & REGISTRO ===
         async function fazerLogin() {
@@ -447,15 +567,13 @@
                 if (data.status === "SUCESSO") {
                     localStorage.setItem('laenged_empresa_id', data.empresa_id);
                     localStorage.setItem('laenged_empresa_nome', data.nome_empresa);
-                    localStorage.setItem('laenged_email', email); // Guarda o email para o checkout
+                    localStorage.setItem('laenged_email', email);
                     abrirDashboard();
                 } else if (data.status === "PENDENTE") {
                     alert("⚠️ " + data.mensagem);
                     document.getElementById('reg-email').value = email;
                     alternarTelaAuth('verificacao');
-                } else {
-                    alert("❌ " + data.mensagem);
-                }
+                } else { alert("❌ " + data.mensagem); }
             } catch (e) { alert("Falha de conexão com o servidor."); } 
             finally {
                 document.getElementById('btn-fazer-login').innerText = "Entrar no Sistema";
@@ -463,6 +581,82 @@
             }
         }
 
+        async function fazerLoginAdmin() {
+            const email = document.getElementById('admin-email').value.trim();
+            const senha = document.getElementById('admin-senha').value.trim();
+            if(!email || !senha) return alert("Preencha as credenciais do ADM.");
+            
+            try {
+                const res = await fetch(`${API_URL}/admin/login`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, senha: senha })
+                });
+                const data = await res.json();
+                if (data.status === "SUCESSO") {
+                    localStorage.setItem('laenged_is_admin', 'true');
+                    abrirAdminPanel();
+                } else { alert("❌ " + data.mensagem); }
+            } catch (e) { alert("Falha de conexão com o servidor."); } 
+        }
+
+        async function carregarChamadosAdmin() {
+            let divLista = document.getElementById('admin-lista-chamados');
+            try {
+                const res = await fetch(`${API_URL}/admin/chamados/todos`);
+                const json = await res.json();
+                if(json.status === "SUCESSO") {
+                    if(json.dados.length === 0) return divLista.innerHTML = `<p style="text-align:center;">Fila vazia. Tudo tranquilo!</p>`;
+                    divLista.innerHTML = "";
+                    json.dados.forEach(c => {
+                        let classBadge = c.status === 'ABERTO' ? 'status-aberto' : (c.status === 'EM_ANALISE' ? 'status-analise' : 'status-respondido');
+                        let dadosSeguros = btoa(unescape(encodeURIComponent(JSON.stringify(c))));
+                        
+                        divLista.innerHTML += `
+                            <div class="ticket-item" onclick="selecionarChamadoAdmin('${dadosSeguros}')">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <strong style="font-size: 14px;">#${c.id} - ${c.empresa}</strong>
+                                    <span class="${classBadge}">${c.status.replace("_", " ")}</span>
+                                </div>
+                                <p style="font-size: 12px; color: #666; margin-top: 5px;">Módulo: ${c.tipo_chamado.toUpperCase()}</p>
+                                <p style="font-size: 11px; color: #999; margin-top: 3px;">Data: ${c.data_abertura}</p>
+                            </div>`;
+                    });
+                }
+            } catch(e) { divLista.innerHTML = "<p>Erro ao carregar fila.</p>"; }
+        }
+
+        function selecionarChamadoAdmin(dadosBase64) {
+            let c = JSON.parse(decodeURIComponent(escape(atob(dadosBase64))));
+            
+            document.getElementById('admin-aviso-selecao').style.display = 'none';
+            document.getElementById('admin-painel-resposta').style.display = 'block';
+            
+            document.getElementById('admin-resp-id').value = c.id;
+            document.getElementById('admin-resp-empresa').innerText = c.empresa;
+            document.getElementById('admin-resp-tipo').innerText = c.tipo_chamado.toUpperCase();
+            document.getElementById('admin-resp-desc').innerText = c.descricao;
+            document.getElementById('admin-resp-status').value = c.status;
+            document.getElementById('admin-resp-texto').value = c.resposta_admin ? c.resposta_admin : "";
+        }
+
+        async function salvarRespostaAdmin() {
+            let id = document.getElementById('admin-resp-id').value;
+            let status = document.getElementById('admin-resp-status').value;
+            let texto = document.getElementById('admin-resp-texto').value;
+
+            try {
+                const res = await fetch(`${API_URL}/admin/chamados/responder`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chamado_id: parseInt(id), resposta: texto, status: status })
+                });
+                const data = await res.json();
+                if(data.status === "SUCESSO") {
+                    alert("✅ Resposta Salva!");
+                    carregarChamadosAdmin(); 
+                } else alert("❌ Erro: " + data.mensagem);
+            } catch(e) { alert("Erro de conexão."); }
+        }
+        
         async function fazerRegistro() {
             const empresa = document.getElementById('reg-empresa').value.trim();
             const email = document.getElementById('reg-email').value.trim();
@@ -486,9 +680,7 @@
                 if (data.status === "SUCESSO") {
                     alert("📨 " + data.mensagem);
                     alternarTelaAuth('verificacao');
-                } else {
-                    alert("❌ " + data.mensagem);
-                }
+                } else { alert("❌ " + data.mensagem); }
             } catch (e) { alert("Falha de conexão com o servidor."); } 
             finally {
                 document.getElementById('btn-fazer-registro').innerText = "Criar Conta e Iniciar Teste";
@@ -499,7 +691,6 @@
         async function validarCodigo() {
             const email = document.getElementById('reg-email').value.trim(); 
             const codigo = document.getElementById('codigo-verificacao').value.trim();
-            
             if(!codigo) return alert("Digite o código recebido.");
 
             document.getElementById('btn-validar-codigo').innerText = "Validando...";
@@ -516,9 +707,7 @@
                     alert("🎉 " + data.mensagem + "\n\nFaça o login agora para acessar seu portal.");
                     alternarTelaAuth('login');
                     document.getElementById('login-email').value = email; 
-                } else {
-                    alert("❌ " + data.mensagem);
-                }
+                } else { alert("❌ " + data.mensagem); }
             } catch (e) { alert("Falha de conexão com o servidor."); } 
             finally {
                 document.getElementById('btn-validar-codigo').innerText = "Validar e Acessar";
@@ -526,11 +715,9 @@
             }
         }
 
-        // === API: RECUPERAÇÃO DE SENHA ===
         async function solicitarRecuperacao() {
             const email = document.getElementById('recuperar-email').value.trim();
             if(!email) return alert("Digite o seu e-mail.");
-
             document.getElementById('btn-solicitar-recuperacao').innerText = "Enviando...";
             document.getElementById('btn-solicitar-recuperacao').disabled = true;
 
@@ -540,13 +727,10 @@
                     body: JSON.stringify({ email: email })
                 });
                 const data = await res.json();
-
                 if (data.status === "SUCESSO") {
                     alert("📨 " + data.mensagem);
                     alternarTelaAuth('recuperar-redefinir');
-                } else {
-                    alert("❌ " + data.mensagem);
-                }
+                } else { alert("❌ " + data.mensagem); }
             } catch (e) { alert("Falha de conexão."); } 
             finally {
                 document.getElementById('btn-solicitar-recuperacao').innerText = "Enviar Código";
@@ -561,7 +745,6 @@
             const novaSenhaConfirma = document.getElementById('recuperar-nova-senha-confirma').value.trim();
             
             if(!codigo || !novaSenha || !novaSenhaConfirma) return alert("Preencha o código e a nova senha.");
-            
             if(novaSenha !== novaSenhaConfirma) return alert("As senhas digitadas não coincidem. Verifique os campos e tente novamente.");
 
             document.getElementById('btn-redefinir-senha').innerText = "Salvando...";
@@ -573,14 +756,11 @@
                     body: JSON.stringify({ email: email, codigo: codigo, nova_senha: novaSenha })
                 });
                 const data = await res.json();
-
                 if (data.status === "SUCESSO") {
                     alert("🎉 " + data.mensagem);
                     alternarTelaAuth('login');
                     document.getElementById('login-email').value = email; 
-                } else {
-                    alert("❌ " + data.mensagem);
-                }
+                } else { alert("❌ " + data.mensagem); }
             } catch (e) { alert("Falha de conexão."); } 
             finally {
                 document.getElementById('btn-redefinir-senha').innerText = "Redefinir e Entrar";
@@ -588,29 +768,24 @@
             }
         }
 
-        // === NOVA FUNÇÃO PARA COPIAR A CHAVE ===
         function copiarChave(chave, btnElement) {
             navigator.clipboard.writeText(chave).then(() => {
                 let textoOriginal = btnElement.innerHTML;
                 btnElement.innerHTML = "✅ Copiado!";
                 btnElement.style.background = "var(--verde-sucesso)";
                 btnElement.style.color = "white";
-                
                 setTimeout(() => {
                     btnElement.innerHTML = textoOriginal;
                     btnElement.style.background = "#e1e4e8";
                     btnElement.style.color = "var(--escuro)";
                 }, 2000);
-            }).catch(err => {
-                alert("Falha ao copiar. Tente selecionar o texto manualmente.");
-            });
+            }).catch(err => { alert("Falha ao copiar. Tente selecionar o texto manualmente."); });
         }
 
-        // === API: CARREGAR LICENÇAS E INSERIR CHECKBOXES ===
         async function carregarLicencas() {
             const empresa_id = localStorage.getItem('laenged_empresa_id');
             const tabela = document.getElementById("corpo-tabela");
-            tabela.innerHTML = "<tr><td colspan='6' style='text-align: center; color: #666;'>Buscando do banco de dados...</td></tr>";
+            tabela.innerHTML = "<tr><td colspan='7' style='text-align: center; color: #666;'>Buscando do banco de dados...</td></tr>";
 
             try {
                 const resposta = await fetch(`${API_URL}/painel/licencas/${empresa_id}`);
@@ -618,13 +793,12 @@
 
                 if (json.status === "SUCESSO") {
                     tabela.innerHTML = ""; 
-                    if (json.dados.length === 0) return tabela.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Nenhuma licença encontrada.</td></tr>";
+                    if (json.dados.length === 0) return tabela.innerHTML = "<tr><td colspan='7' style='text-align:center;'>Nenhuma licença encontrada.</td></tr>";
 
                     json.dados.forEach(licenca => {
                         let isTrial = licenca.tipo === "TRIAL";
                         let badgeTipo = isTrial ? `<span class="status-trial">TRIAL 5 DIAS</span>` : `<span class="status-ativo">PAGO</span>`;
                         
-                        // NOVA LÓGICA: Verifica se a data de hoje é maior que a data de vencimento
                         let dataVencimento = new Date(licenca.vencimento + "T23:59:59");
                         let hoje = new Date();
                         let expirada = hoje > dataVencimento;
@@ -632,7 +806,6 @@
                         let corStatus = "";
                         let textoStatus = "";
 
-                        // Se estiver expirada, força o status vermelho, independente do banco
                         if (expirada) {
                             corStatus = "status-expirada";
                             textoStatus = "Expirada";
@@ -650,14 +823,16 @@
                             botaoAcao = isTrial ? "<span style='color:#999; font-size:11px;'>Intransferível</span>" : `<button class="btn-desvincular" onclick="desvincular('${licenca.chave}')">Desvincular</button>`;
                         }
 
-                        let checkbox = isTrial ? `<input type="checkbox" disabled title="Trials não são renováveis">` : `<input type="checkbox" class="chk-renovar" value="${licenca.chave}" onchange="atualizarCarrinho()">`;
-                        
-                        // Botão de Copiar
+                        let checkbox = isTrial ? `<input type="checkbox" disabled title="Trials não são renováveis">` : `<input type="checkbox" class="chk-renovar" value="${licenca.chave}" onchange="limitarCheckboxes(this)">`;
                         let btnCopiar = `<button class="btn-copiar" onclick="copiarChave('${licenca.chave}', this)" title="Copiar Chave">📋 Copiar</button>`;
+                        
+                        let nomeAtual = licenca.nome_usuario ? licenca.nome_usuario : "";
+                        let inputUsuario = `<input type="text" class="input-nome-user" placeholder="Nome do Usuário" value="${nomeAtual}" onchange="salvarNomeUsuario('${licenca.chave}', this.value)" title="Edite e pressione Enter (ou clique fora) para salvar">`;
 
                         let linha = `
                             <tr>
                                 <td style="white-space: nowrap;">${checkbox} <strong>${licenca.chave}</strong> ${btnCopiar}</td>
+                                <td>${inputUsuario}</td>
                                 <td>${badgeTipo}</td>
                                 <td><span class="${corStatus}">${textoStatus}</span></td>
                                 <td>${comp}</td>
@@ -668,36 +843,36 @@
                         tabela.innerHTML += linha;
                     });
                 }
-            } catch (erro) { tabela.innerHTML = "<tr><td colspan='6'>Erro de conexão.</td></tr>"; }
+            } catch (erro) { tabela.innerHTML = "<tr><td colspan='7'>Erro de conexão.</td></tr>"; }
         }
 
-        // === LÓGICA DE RENOVAÇÃO / COMPRA ===
-        function atualizarCarrinho() {
-            let checkboxes = document.querySelectorAll('.chk-renovar:checked');
+        function limitarCheckboxes(chkClicado) {
             let inputQtd = document.getElementById('qtd-licencas');
-            
-            if (checkboxes.length > 0) {
-                inputQtd.value = checkboxes.length;
-                inputQtd.disabled = true;
-            } else {
-                inputQtd.disabled = false;
+            let qtdMax = parseInt(inputQtd.value);
+            if (isNaN(qtdMax) || qtdMax < 1) { qtdMax = 1; inputQtd.value = 1; }
+
+            let marcados = document.querySelectorAll('.chk-renovar:checked');
+            if (marcados.length > qtdMax) {
+                if (chkClicado) {
+                    alert(`Você definiu a compra de apenas ${qtdMax} licença(s). Para selecionar mais, aumente a quantidade primeiro.`);
+                    chkClicado.checked = false;
+                } else {
+                    for (let i = qtdMax; i < marcados.length; i++) marcados[i].checked = false;
+                }
             }
-            
-            // Aqui ele chama o cálculo UMA única vez
-            calcularPreco();
+            calcularPreco(); 
         }
 
-        // === API: PREÇOS E CUPONS ===
         async function carregarPrecoDoBanco() {
             try {
                 const res = await fetch(`${API_URL}/config/preco`);
                 const data = await res.json();
                 if(data.status === "SUCESSO") {
-                    precoBaseGlob = data.preco;
-                    document.getElementById('valor-unitario-base-display').innerText = precoBaseGlob.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                    calcularPreco(); 
+                    if(data.precos) precosGlobais = data.precos;
+                    if(data.disponibilidade) statusGlobais = data.disponibilidade;
                 }
-            } catch(e) { console.log("Erro ao buscar preço."); }
+            } catch(e) { console.log("Erro ao buscar configurações do servidor."); } 
+            finally { calcularPreco(); }
         }
 
         async function aplicarCupom() {
@@ -721,66 +896,120 @@
         }
 
         function calcularPreco() {
-            if (precoBaseGlob === 0) return; 
+            let dropdown = document.getElementById('tipo-produto');
+            let btnCheckout = document.getElementById('btn-checkout');
+            if (!dropdown || !btnCheckout) return;
 
-            let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
-            let precoUnitario = precoBaseGlob;
+            let produtoSelecionado = dropdown.value;
+            let moduloAtivo = statusGlobais[produtoSelecionado];
+            if (moduloAtivo === undefined) moduloAtivo = true;
 
-            if (qtd > 1) {
-                let expoente = qtd > 11 ? 10 : (qtd - 1);
-                precoUnitario = precoBaseGlob * Math.pow(0.98, expoente); 
+            if (!moduloAtivo) {
+                document.getElementById('valor-unitario-base-display').innerHTML = "<span style='color: var(--vermelho-erro); font-weight: bold;'>Aguarde o lançamento!</span>";
+                document.getElementById('valor-unitario-display').innerText = "Indisponível";
+                document.getElementById('valor-total').innerText = "Indisponível";
+                document.getElementById('area-economia').style.display = 'none';
+                btnCheckout.innerText = "🔒 Módulo não disponível";
+                btnCheckout.disabled = true;
+                return;
             }
 
-            let precoComCupom = precoUnitario * (1 - descontoCupomAtivo);
-            let valorTotal = qtd * precoComCupom;
+            let precoBaseAtual = parseFloat(precosGlobais[produtoSelecionado]) || 420.0;
+            let qtdInput = document.getElementById('qtd-licencas');
+            let qtd = qtdInput ? parseInt(qtdInput.value) : 1;
+            if (isNaN(qtd) || qtd < 1) qtd = 1;
 
-            let totalSemDesconto = precoBaseGlob * qtd;
-            let economiaReal = totalSemDesconto - valorTotal;
-            let porcentagemEconomia = (economiaReal / totalSemDesconto) * 100;
+            let precoUnitario = precoBaseAtual;
+            if (qtd > 1) {
+                let expoente = qtd > 11 ? 10 : (qtd - 1);
+                precoUnitario = precoBaseAtual * Math.pow(0.98, expoente); 
+            }
 
-            document.getElementById('valor-unitario-display').innerText = precoComCupom.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            let valorNovoModulo = precoUnitario * qtd;
+            let valorComplementoBase = 0;
+            let diasExtensao = 0;
+            let checkboxes = document.querySelectorAll('.chk-renovar:checked');
+
+            if (checkboxes.length > 0) {
+                let linha = checkboxes[0].closest('tr');
+                let dataTexto = linha.cells[5].innerText.trim(); 
+                
+                if (dataTexto && dataTexto.includes('-')) {
+                    let dataVenc = new Date(dataTexto + "T23:59:59");
+                    let hoje = new Date();
+                    let diffTempo = dataVenc - hoje;
+                    let diasRestantesAtual = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+                    if (diasRestantesAtual < 0) diasRestantesAtual = 0;
+
+                    diasExtensao = 365 - diasRestantesAtual;
+                    
+                    if (diasExtensao > 0 && diasExtensao < 365) {
+                        let precoAnualBase = precosGlobais["BATCH"] || 200.0;
+                        let precoUnitarioBaseDesc = precoAnualBase;
+                        if (qtd > 1) {
+                            let expBase = qtd > 11 ? 10 : (qtd - 1);
+                            precoUnitarioBaseDesc = precoAnualBase * Math.pow(0.98, expBase);
+                        }
+                        valorComplementoBase = ((precoUnitarioBaseDesc / 365.0) * diasExtensao) * checkboxes.length;
+                    }
+                }
+            }
+
+            let subtotal = valorNovoModulo + valorComplementoBase;
+            let valorTotal = subtotal * (1 - descontoCupomAtivo);
+            let economiaVolume = (precoBaseAtual * qtd) - valorNovoModulo;
+            let economiaCupom = subtotal - valorTotal;
+
+            document.getElementById('valor-unitario-base-display').innerText = precoBaseAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('valor-unitario-display').innerText = (precoBaseAtual * (1 - descontoCupomAtivo)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             document.getElementById('valor-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            if (economiaReal > 0) {
+            if (diasExtensao > 0 && valorComplementoBase > 0) {
                 document.getElementById('area-economia').style.display = 'block';
-                document.getElementById('mensagem-desconto').innerHTML = `🔥 Você economizou <b>${economiaReal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b> (${porcentagemEconomia.toFixed(2)}%)`;
+                document.getElementById('mensagem-desconto').innerHTML = `🔄 <b>Alinhamento Anual:</b> Incluindo extensão proporcional na(s) licença(s) atual(is) para vencimento +1 ano!`;
+            } else if (descontoCupomAtivo > 0 || economiaVolume > 0) {
+                document.getElementById('area-economia').style.display = 'block';
+                document.getElementById('mensagem-desconto').innerHTML = `🔥 Desconto aplicado: <b>${(economiaVolume + economiaCupom).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b> de economia.`;
             } else {
                 document.getElementById('area-economia').style.display = 'none';
             }
+
+            btnCheckout.disabled = false;
+            let qtdMarcadas = checkboxes.length;
+            
+            if (qtdMarcadas > 0) {
+                if (qtdMarcadas < qtd) {
+                    let novas = qtd - qtdMarcadas;
+                    btnCheckout.innerText = `🔒 Ir para Pagamento (${qtdMarcadas} Renov. + ${novas} Novas)`;
+                } else {
+                    btnCheckout.innerText = "🔒 Ir para Pagamento (Renovar / Alinhar +1 Ano)";
+                }
+            } else { btnCheckout.innerText = "🔒 Ir para Pagamento Seguro"; }
         }
 
-        // === API: DESVINCULAR MÁQUINA ===
         async function desvincular(chave) {
             if (!confirm(`Tem certeza que deseja liberar a chave ${chave}?\nO PC atual perderá o acesso imediatamente.`)) return;
-
             try {
                 const resposta = await fetch(`${API_URL}/desvincular`, {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ chave_acesso: chave })
                 });
                 const json = await resposta.json();
-
                 if (json.status === "SUCESSO") {
                     alert("✅ Sucesso: " + json.mensagem);
                     carregarLicencas(); 
-                } else {
-                    alert("❌ Erro: " + json.mensagem);
-                }
+                } else { alert("❌ Erro: " + json.mensagem); }
             } catch (erro) { alert("Erro ao tentar falar com o servidor."); }
         }
 
-        // === INTEGRAÇÃO COM GATEWAY (CHECKOUT HOSTED) ===
         async function iniciarCheckoutHosted() {
             let checkboxes = document.querySelectorAll('.chk-renovar:checked');
             let empresa_id = localStorage.getItem('laenged_empresa_id');
             let email_cliente = localStorage.getItem('laenged_email');
-            
             let cpfCnpjRaw = document.getElementById('input-cpf-cnpj').value;
             let cpfCnpjFormatado = cpfCnpjRaw.replace(/\D/g, ''); 
 
-            if (!cpfCnpjFormatado || cpfCnpjFormatado.length < 11) {
-                return alert("⚠️ Por favor, informe um CPF ou CNPJ válido para gerar a fatura.");
-            }
+            if (!cpfCnpjFormatado || cpfCnpjFormatado.length < 11) return alert("⚠️ Por favor, informe um CPF ou CNPJ válido para gerar a fatura.");
 
             let cupom = document.getElementById('input-cupom').value.toUpperCase().trim();
             let qtd = parseInt(document.getElementById('qtd-licencas').value) || 1;
@@ -789,23 +1018,10 @@
 
             let chavesParaRenovar = [];
             let tipoTransacao = "NOVA_COMPRA";
-            let chaveBaseCoterm = "";
 
             if (checkboxes.length > 0) {
                 chavesParaRenovar = Array.from(checkboxes).map(chk => chk.value);
-                
-                // MÁGICA: Se ele selecionou uma chave e o produto for diferente, ativamos o Co-terming (Pro-rata)
-                if (checkboxes.length === 1) {
-                    let confirmacao = confirm("Você selecionou 1 licença existente. Deseja alinhar o vencimento do novo módulo escolhido com a data desta licença (Pagamento Proporcional)?\n\n• Clique em [OK] para Alinhar (Adicionar Novo Módulo).\n• Clique em [CANCELAR] para fazer uma Renovação Normal (+1 ano).");
-                    if (confirmacao) {
-                        tipoTransacao = "COTERM";
-                        chaveBaseCoterm = chavesParaRenovar[0];
-                    } else {
-                        tipoTransacao = "RENOVACAO";
-                    }
-                } else {
-                    tipoTransacao = "RENOVACAO";
-                }
+                tipoTransacao = "COTERM";
             }
 
             btn.innerText = "Gerando Link Seguro...";
@@ -813,25 +1029,16 @@
 
             try {
                 const res = await fetch(`${API_URL}/checkout/iniciar`, {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        empresa_id: parseInt(empresa_id), 
-                        email: email_cliente,
-                        qtd_licencas: qtd,
-                        tipo: tipoTransacao,
-                        produto: produtoSelecionado,
-                        chave_base: chaveBaseCoterm,
-                        chaves_renovacao: chavesParaRenovar,
-                        cupom: cupom,
-                        cpf_cnpj: cpfCnpjFormatado
+                        empresa_id: parseInt(empresa_id), email: email_cliente, qtd_licencas: qtd, tipo: tipoTransacao,
+                        produto: produtoSelecionado, chave_base: chavesParaRenovar.length > 0 ? chavesParaRenovar[0] : "", 
+                        chaves_renovacao: chavesParaRenovar, cupom: cupom, cpf_cnpj: cpfCnpjFormatado
                     })
                 });
                 const json = await res.json();
-                
-                if(json.status === "SUCESSO" && json.url_checkout) {
-                    window.location.href = json.url_checkout;
-                } else {
+                if(json.status === "SUCESSO" && json.url_checkout) window.location.href = json.url_checkout;
+                else {
                     alert("⚠️ " + (json.mensagem || "Erro ao gerar link de pagamento."));
                     btn.innerText = "🔒 Ir para Pagamento Seguro";
                     btn.disabled = false;
@@ -841,6 +1048,15 @@
                 btn.innerText = "🔒 Ir para Pagamento Seguro";
                 btn.disabled = false;
             }
+        }
+        
+        async function salvarNomeUsuario(chave, nome) {
+            try {
+                await fetch(`${API_URL}/painel/licencas/usuario`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chave_acesso: chave, nome_usuario: nome })
+                });
+            } catch(e) { console.log("Erro ao salvar nome de usuário."); }
         }
     </script>
 </body>
