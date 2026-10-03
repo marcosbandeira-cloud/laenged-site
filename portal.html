@@ -244,7 +244,18 @@
                 </div>
 
                 <div class="card">
-                    <h2>🔑 Minhas Licenças e Dispositivos</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h2 style="margin: 0; border: none; padding: 0;">🔑 Minhas Licenças e Dispositivos</h2>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <label style="font-size: 13px; color: #555; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" id="check-portal-trial" checked onchange="filtrarTabela('filtro-portal-licencas', 'corpo-tabela', 'check-portal-trial')"> Exibir licenças TRIAL
+                            </label>
+                            
+                            <input type="text" id="filtro-portal-licencas" placeholder="🔍 Buscar chave, usuário, PC..." class="qtd-input" style="width: 250px; margin: 0; font-size: 13px; padding: 8px;" onkeyup="filtrarTabela('filtro-portal-licencas', 'corpo-tabela', 'check-portal-trial')">
+                        </div>
+                    </div>
+                    <hr style="border: 0; border-top: 2px solid var(--cinza-claro); margin-bottom: 15px;">
                     <p style="margin-bottom: 15px; font-size: 14px; color: #555;">Selecione licenças abaixo para renovar ou alinhar vencimentos. Edite o nome do usuário para seu controle.</p>
                     <div style="overflow-x: auto;">
                         <table>
@@ -275,7 +286,8 @@
                         <div style="margin-bottom: 15px;">
                             <label style="font-weight: bold; font-size: 14px; color: var(--escuro);">Escolha o Pacote / Módulo:</label>
                             <select id="tipo-produto" class="qtd-input" style="margin-top: 5px; cursor: pointer; border-color: var(--azul-corp); background-color: white;" onchange="calcularPreco()">
-                                <option value="FULL">🚀 Full Suite (Batch + Layers + Estruturas)</option>
+                                <!-- 👇 O 'value' agora é o nome exato que está no banco -->
+                                <option value="BAT+EST+LAY">🚀 Combo Premium (Batch + Estruturas + Layers)</option>
                                 <option value="BATCH">⚙️ Módulo Produtividade (Apenas Batch + Layers)</option>
                                 <option value="ESTRUTURAS">🏗️ Módulo Engenharia (Apenas Estruturas)</option>
                             </select>
@@ -432,8 +444,8 @@
         const API_URL = "https://laenged-api.onrender.com";
         let descontoCupomAtivo = 0; 
         
-        let precosGlobais = { "BATCH": 200.0, "ESTRUTURAS": 300.0, "FULL": 420.0 };
-        let statusGlobais = { "BATCH": true, "ESTRUTURAS": false, "FULL": false };
+        let precosGlobais = { "BATCH": 200.0, "ESTRUTURAS": 300.0, "BAT+EST+LAY": 420.0 };
+        let statusGlobais = { "BATCH": true, "ESTRUTURAS": false, "BAT+EST+LAY": false };
 
         // === CONTROLE DE TELAS ===
         function alternarTelaAuth(tela) {
@@ -797,7 +809,12 @@
 
                     json.dados.forEach(licenca => {
                         let isTrial = licenca.tipo === "TRIAL";
-                        let badgeTipo = isTrial ? `<span class="status-trial">TRIAL 5 DIAS</span>` : `<span class="status-ativo">PAGO</span>`;
+                        // 👇 MÁGICA 1: Puxa o nome do módulo que veio do banco (ou assume BATCH)
+                        let produtoNome = licenca.produto || "BATCH"; 
+                        
+                        let badgeTipo = isTrial 
+                            ? `<span class="status-trial">TRIAL 5 DIAS</span>` 
+                            : `<span class="status-ativo" style="background: var(--azul-corp);">${produtoNome}</span>`;
                         
                         let dataVencimento = new Date(licenca.vencimento + "T23:59:59");
                         let hoje = new Date();
@@ -823,7 +840,11 @@
                             botaoAcao = isTrial ? "<span style='color:#999; font-size:11px;'>Intransferível</span>" : `<button class="btn-desvincular" onclick="desvincular('${licenca.chave}')">Desvincular</button>`;
                         }
 
-                        let checkbox = isTrial ? `<input type="checkbox" disabled title="Trials não são renováveis">` : `<input type="checkbox" class="chk-renovar" value="${licenca.chave}" onchange="limitarCheckboxes(this)">`;
+                        // 👇 MÁGICA 2: Injeta o "data-produto" no checkbox para o cálculo saber o pacote atual
+                        let checkbox = isTrial 
+                            ? `<input type="checkbox" disabled title="Trials não são renováveis">` 
+                            : `<input type="checkbox" class="chk-renovar" value="${licenca.chave}" data-produto="${produtoNome}" onchange="limitarCheckboxes(this)">`;
+                        
                         let btnCopiar = `<button class="btn-copiar" onclick="copiarChave('${licenca.chave}', this)" title="Copiar Chave">📋 Copiar</button>`;
                         
                         let nomeAtual = licenca.nome_usuario ? licenca.nome_usuario : "";
@@ -925,66 +946,88 @@
                 precoUnitario = precoBaseAtual * Math.pow(0.98, expoente); 
             }
 
-            let valorNovoModulo = precoUnitario * qtd;
-            let valorComplementoBase = 0;
-            let diasExtensao = 0;
             let checkboxes = document.querySelectorAll('.chk-renovar:checked');
+            let qtdMarcadas = checkboxes.length;
+            let qtdNovas = qtd - qtdMarcadas;
+            if (qtdNovas < 0) qtdNovas = 0; 
 
-            if (checkboxes.length > 0) {
-                let linha = checkboxes[0].closest('tr');
+            // ===============================================
+            // 👇 CÁLCULO SEPARADO (NOVAS vs RENOVAÇÃO vs UPGRADE)
+            // ===============================================
+            let valorNovas = qtdNovas * precoUnitario;
+            let valorRenovacoes = 0;
+            let creditoUpgrade = 0;
+            let temUpgrade = false;
+
+            checkboxes.forEach(chk => {
+                let produtoAntigo = chk.getAttribute('data-produto');
+                let linha = chk.closest('tr');
                 let dataTexto = linha.cells[5].innerText.trim(); 
                 
+                let diasRestantesAtual = 0;
                 if (dataTexto && dataTexto.includes('-')) {
                     let dataVenc = new Date(dataTexto + "T23:59:59");
                     let hoje = new Date();
                     let diffTempo = dataVenc - hoje;
-                    let diasRestantesAtual = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+                    diasRestantesAtual = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
                     if (diasRestantesAtual < 0) diasRestantesAtual = 0;
-
-                    diasExtensao = 365 - diasRestantesAtual;
-                    
-                    if (diasExtensao > 0 && diasExtensao < 365) {
-                        let precoAnualBase = precosGlobais["BATCH"] || 200.0;
-                        let precoUnitarioBaseDesc = precoAnualBase;
-                        if (qtd > 1) {
-                            let expBase = qtd > 11 ? 10 : (qtd - 1);
-                            precoUnitarioBaseDesc = precoAnualBase * Math.pow(0.98, expBase);
-                        }
-                        valorComplementoBase = ((precoUnitarioBaseDesc / 365.0) * diasExtensao) * checkboxes.length;
-                    }
                 }
-            }
 
-            let subtotal = valorNovoModulo + valorComplementoBase;
+                valorRenovacoes += precoUnitario; // Paga a anuidade normal da renovação
+
+                // Se o produto for diferente, é UPGRADE. Dá os dias restantes como crédito/desconto!
+                if (produtoAntigo && produtoAntigo !== produtoSelecionado && diasRestantesAtual > 0) {
+                    temUpgrade = true;
+                    let precoBaseAntigo = parseFloat(precosGlobais[produtoAntigo]) || 200.0;
+                    let valorResidual = (precoBaseAntigo / 365.0) * diasRestantesAtual;
+                    creditoUpgrade += valorResidual;
+                }
+            });
+
+            let subtotal = (valorNovas + valorRenovacoes) - creditoUpgrade;
+            if (subtotal < 0) subtotal = 0; 
+
             let valorTotal = subtotal * (1 - descontoCupomAtivo);
-            let economiaVolume = (precoBaseAtual * qtd) - valorNovoModulo;
+            let economiaVolume = (precoBaseAtual * qtd) - (valorNovas + valorRenovacoes);
             let economiaCupom = subtotal - valorTotal;
 
+            // ===============================================
+            // ATUALIZAÇÃO DA TELA (Com o bug do Unitário resolvido!)
+            // ===============================================
             document.getElementById('valor-unitario-base-display').innerText = precoBaseAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('valor-unitario-display').innerText = (precoBaseAtual * (1 - descontoCupomAtivo)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            // Agora usa precoUnitario em vez de precoBaseAtual
+            document.getElementById('valor-unitario-display').innerText = (precoUnitario * (1 - descontoCupomAtivo)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             document.getElementById('valor-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            if (diasExtensao > 0 && valorComplementoBase > 0) {
-                document.getElementById('area-economia').style.display = 'block';
-                document.getElementById('mensagem-desconto').innerHTML = `🔄 <b>Alinhamento Anual:</b> Incluindo extensão proporcional na(s) licença(s) atual(is) para vencimento +1 ano!`;
+            let areaEconomia = document.getElementById('area-economia');
+            let msgDesconto = document.getElementById('mensagem-desconto');
+
+            // Avisos Inteligentes na tela
+            if (temUpgrade && creditoUpgrade > 0) {
+                areaEconomia.style.display = 'block';
+                msgDesconto.innerHTML = `🚀 <b>Upgrade Aplicado:</b> Você recebeu <b>${creditoUpgrade.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</b> de crédito pelos dias restantes do plano anterior!`;
+            } else if (qtdMarcadas > 0 && !temUpgrade) {
+                areaEconomia.style.display = 'block';
+                msgDesconto.innerHTML = `🔄 <b>Renovação:</b> Adicionando +1 Ano (365 dias) na(s) licença(s) selecionada(s).`;
             } else if (descontoCupomAtivo > 0 || economiaVolume > 0) {
-                document.getElementById('area-economia').style.display = 'block';
-                document.getElementById('mensagem-desconto').innerHTML = `🔥 Desconto aplicado: <b>${(economiaVolume + economiaCupom).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b> de economia.`;
+                areaEconomia.style.display = 'block';
+                msgDesconto.innerHTML = `🔥 Desconto aplicado: <b>${(economiaVolume + economiaCupom).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</b> de economia.`;
             } else {
-                document.getElementById('area-economia').style.display = 'none';
+                areaEconomia.style.display = 'none';
             }
 
             btnCheckout.disabled = false;
-            let qtdMarcadas = checkboxes.length;
             
+            // Texto do botão muda dependendo se tem Novas e Renovações ao mesmo tempo
             if (qtdMarcadas > 0) {
-                if (qtdMarcadas < qtd) {
-                    let novas = qtd - qtdMarcadas;
-                    btnCheckout.innerText = `🔒 Ir para Pagamento (${qtdMarcadas} Renov. + ${novas} Novas)`;
+                if (qtdNovas > 0) {
+                    btnCheckout.innerText = `🔒 Pagamento (${qtdMarcadas} Renovação + ${qtdNovas} Nova)`;
                 } else {
-                    btnCheckout.innerText = "🔒 Ir para Pagamento (Renovar / Alinhar +1 Ano)";
+                    btnCheckout.innerText = "🔒 Pagamento (Renovar / Upgrade)";
                 }
-            } else { btnCheckout.innerText = "🔒 Ir para Pagamento Seguro"; }
+            } else { 
+                btnCheckout.innerText = "🔒 Ir para Pagamento Seguro"; 
+            }
         }
 
         async function desvincular(chave) {
@@ -1057,6 +1100,30 @@
                     body: JSON.stringify({ chave_acesso: chave, nome_usuario: nome })
                 });
             } catch(e) { console.log("Erro ao salvar nome de usuário."); }
+        }
+// ================= FILTRO INTELIGENTE DE TABELAS =================
+        function filtrarTabela(idInput, idTabela, idCheckTrial = null) {
+            let filtro = document.getElementById(idInput).value.toLowerCase();
+            
+            // Verifica se a caixinha do TRIAL existe e se está marcada
+            let checkTrial = idCheckTrial ? document.getElementById(idCheckTrial) : null;
+            let mostrarTrial = checkTrial ? checkTrial.checked : true;
+
+            let linhas = document.getElementById(idTabela).getElementsByTagName('tr');
+
+            for (let i = 0; i < linhas.length; i++) {
+                if (linhas[i].cells.length <= 1) continue;
+
+                let textoLinha = (linhas[i].textContent || linhas[i].innerText).toLowerCase();
+                
+                // Descobre se a linha pertence a uma licença TRIAL
+                let isTrial = textoLinha.includes('trial');
+                
+                let atendeTexto = textoLinha.indexOf(filtro) > -1;
+                let atendeTrial = mostrarTrial ? true : !isTrial; // Se mostrarTrial for falso, bloqueia quem é Trial
+
+                linhas[i].style.display = (atendeTexto && atendeTrial) ? "" : "none";
+            }
         }
     </script>
 </body>
