@@ -118,6 +118,14 @@
         .btn-checkout { background: var(--escuro); color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;}
         .btn-checkout:hover { background: #111; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15);}
         .btn-checkout:disabled { background: #999; cursor: not-allowed; transform: none; box-shadow: none;}
+
+        /* ================= CHAT / BATE-PAPO DE CHAMADOS ================= */
+        .chat-container { display: flex; flex-direction: column; gap: 10px; max-height: 350px; overflow-y: auto; padding: 12px; border: 1px solid var(--borda); background: #fafafa; border-radius: 6px; margin-bottom: 15px; }
+        .msg-balao { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.4; }
+        .msg-cliente { background: #e3f2fd; color: #0d47a1; align-self: flex-start; border-bottom-left-radius: 0; }
+        .msg-admin { background: #e8f5e9; color: #1b5e20; align-self: flex-end; border-bottom-right-radius: 0; }
+        .msg-header { font-size: 11px; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 15px; }
+        .msg-data { color: #888; font-weight: normal; }
     </style>
 </head>
 <body>
@@ -339,36 +347,58 @@
 
         <div class="container-single">
             <div class="card">
-                <h2 style="color: var(--laranja-cta);">🎧 Abrir Novo Chamado</h2>
-                <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Relate o seu problema ou sugestão. A nossa equipe de engenharia responderá o mais rápido possível.</p>
-                
                 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-                    <div>
-                        <div class="form-group">
-                            <label>Assunto / Módulo</label>
-                            <select id="tipo-chamado" class="qtd-input" style="margin-top: 5px;">
-                                <option value="">Selecione um assunto...</option>
-                                <option value="instalacao">🛠️ Erro de Instalação</option>
-                                <option value="batch">⚙️ Módulo Principal (Batch)</option>
-                                <option value="estruturas">🏗️ Módulo Estruturas</option>
-                                <option value="layers">📑 Módulo Layers</option>
-                                <option value="sugestao">💡 Sugestão de Melhoria</option>
-                                <option value="financeiro">💳 Pagamento / Financeiro</option>
-                                <option value="outros">❓ Outros / Software</option>
-                            </select>
+                    <!-- LADO ESQUERDO: LISTA DE CHAMADOS -->
+                    <div style="border-right: 1px solid var(--borda); padding-right: 20px; max-height: 520px; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="font-size: 16px; color: var(--escuro);">Meus Chamados</h3>
+                            <button class="btn-suporte" onclick="prepararNovoChamado()" style="font-size: 11px; padding: 4px 8px;">+ NOVO</button>
                         </div>
-                        <div class="form-group">
-                            <label>Descrição do Problema</label>
-                            <textarea id="desc-chamado" rows="6" class="qtd-input" placeholder="Descreva detalhadamente o que aconteceu..."></textarea>
+                        <div id="historico-chamados-lista">
+                            <!-- Injetado via JS -->
                         </div>
-                        <button class="btn-auth" style="background: var(--laranja-cta); margin-top: 0;" onclick="enviarChamado()">📩 Enviar Chamado</button>
                     </div>
 
-                    <div style="border-left: 1px solid var(--borda); padding-left: 20px; max-height: 400px; overflow-y: auto;">
-                        <h3 style="font-size: 16px; color: var(--escuro); margin-bottom: 15px;">Histórico de Chamados</h3>
-                        <div id="historico-chamados-lista">
-                            <div style="background: var(--cinza-claro); padding: 20px; border-radius: 6px; text-align: center;">
-                                <p style="font-size: 14px; color: #888;">Você ainda não possui nenhum chamado aberto.</p>
+                    <!-- LADO DIREITO: FORMULÁRIO OU CONVERSA -->
+                    <div>
+                        <!-- PAINEL 1: ABRIR NOVO CHAMADO -->
+                        <div id="painel-novo-chamado">
+                            <h2 style="color: var(--laranja-cta); margin-bottom: 15px; font-size: 18px;">🎧 Abrir Novo Chamado</h2>
+                            <div class="form-group">
+                                <label>Assunto / Módulo</label>
+                                <select id="tipo-chamado" class="qtd-input" style="margin-top: 5px;">
+                                    <option value="">Selecione um assunto...</option>
+                                    <option value="instalacao">🛠️ Erro de Instalação</option>
+                                    <option value="batch">⚙️ Módulo Principal (Batch)</option>
+                                    <option value="estruturas">🏗️ Módulo Estruturas</option>
+                                    <option value="layers">📑 Módulo Layers</option>
+                                    <option value="sugestao">💡 Sugestão de Melhoria</option>
+                                    <option value="financeiro">💳 Pagamento / Financeiro</option>
+                                    <option value="outros">❓ Outros / Software</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Descrição do Problema</label>
+                                <textarea id="desc-chamado" rows="6" class="qtd-input" placeholder="Descreva detalhadamente o que aconteceu..."></textarea>
+                            </div>
+                            <button class="btn-auth" style="background: var(--laranja-cta); margin-top: 0;" onclick="enviarChamado()">📩 Abrir Chamado</button>
+                        </div>
+
+                        <!-- PAINEL 2: BATE-PAPO CONTÍNUO -->
+                        <div id="painel-chat-cliente" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h2 style="color: var(--azul-corp); font-size: 16px; border:none; margin:0; padding:0;" id="chat-cli-titulo">Chamado #000</h2>
+                                <span id="chat-cli-status" class="status-aberto">Status</span>
+                            </div>
+                            
+                            <div id="cliente-chat-historico" class="chat-container">
+                                <!-- Mensagens da conversa -->
+                            </div>
+
+                            <div id="area-resposta-cliente">
+                                <input type="hidden" id="chat-cli-id">
+                                <textarea id="chat-cli-nova-msg" rows="3" class="qtd-input" placeholder="Digite sua resposta para o suporte..."></textarea>
+                                <button class="btn-auth" style="background: var(--azul-corp); margin-top: 5px;" onclick="enviarMensagemCliente()">Responder Suporte</button>
                             </div>
                         </div>
                     </div>
@@ -404,11 +434,16 @@
             <div class="card">
                 <h2 style="color: var(--laranja-cta);">✍️ Responder Chamado</h2>
                 <div id="admin-painel-resposta" style="display: none;">
-                    <div style="background: var(--cinza-claro); padding: 15px; border-radius: 6px; margin-bottom: 15px;">
-                        <p style="font-size: 12px; color: #666;">Empresa: <strong id="admin-resp-empresa" style="color: var(--escuro);">...</strong></p>
-                        <p style="font-size: 12px; color: #666;">Assunto: <strong id="admin-resp-tipo" style="color: var(--escuro);">...</strong></p>
-                        <hr style="border: 0; border-top: 1px solid var(--borda); margin: 10px 0;">
-                        <p style="font-size: 14px; color: var(--escuro);" id="admin-resp-desc">...</p>
+                    <div style="background: var(--cinza-claro); padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p style="font-size: 12px; color: #666;">Empresa: <strong id="admin-resp-empresa" style="color: var(--escuro);">...</strong></p>
+                            <p style="font-size: 12px; color: #666;">Assunto: <strong id="admin-resp-tipo" style="color: var(--escuro);">...</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- HISTÓRICO DE MENSAGENS -->
+                    <div id="admin-chat-historico" class="chat-container">
+                        <!-- Mensagens da conversa -->
                     </div>
 
                     <input type="hidden" id="admin-resp-id">
@@ -424,11 +459,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Sua Resposta</label>
-                        <textarea id="admin-resp-texto" rows="6" class="qtd-input" placeholder="Escreva a resposta..."></textarea>
+                        <label>Nova Mensagem (Suporte)</label>
+                        <textarea id="admin-resp-texto" rows="3" class="qtd-input" placeholder="Escreva a resposta..."></textarea>
                     </div>
 
-                    <button class="btn-checkout" style="background: var(--verde-sucesso);" onclick="salvarRespostaAdmin()">💾 Salvar Resposta</button>
+                    <button class="btn-checkout" style="background: var(--verde-sucesso);" onclick="salvarRespostaAdmin()">📩 Enviar Mensagem</button>
                 </div>
                 <div id="admin-aviso-selecao" style="text-align: center; color: #999; margin-top: 50px;">
                     <p>Selecione um chamado na lista ao lado.</p>
@@ -501,41 +536,111 @@
             document.getElementById('chamados-screen').style.display = 'block';
             carregarChamados(); // Puxa os dados reais da API!
         }
+        
+        function prepararNovoChamado() {
+            document.getElementById('painel-chat-cliente').style.display = 'none';
+            document.getElementById('painel-novo-chamado').style.display = 'block';
+            document.getElementById('tipo-chamado').value = "";
+            document.getElementById('desc-chamado').value = "";
+        }
 
+        function renderizarMensagens(mensagens, containerId, nomeCliente) {
+            let container = document.getElementById(containerId);
+            container.innerHTML = "";
+
+            if (!mensagens || mensagens.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#999; font-size:12px; margin-top:10px;'>Nenhuma mensagem.</p>";
+                return;
+            }
+
+            mensagens.forEach(m => {
+                let isCliente = m.remetente === "CLIENTE";
+                let classe = isCliente ? "msg-cliente" : "msg-admin";
+                let autor = isCliente ? nomeCliente : "Suporte LAENGED";
+                let data = m.data_envio || "";
+
+                container.innerHTML += `
+                    <div class="msg-balao ${classe}">
+                        <div class="msg-header">
+                            <span>${autor}</span>
+                            <span class="msg-data">${data}</span>
+                        </div>
+                        <div>${(m.texto || "").replace(/\n/g, '<br>')}</div>
+                    </div>
+                `;
+            });
+
+            setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
+        }
+
+        // ================= FLUXO CLIENTE =================
         async function carregarChamados() {
+            prepararNovoChamado();
             let empresa_id = localStorage.getItem('laenged_empresa_id');
             let divHistorico = document.getElementById('historico-chamados-lista');
-            divHistorico.innerHTML = "<p style='font-size: 14px; color: #888; text-align: center;'>Buscando histórico...</p>";
+            divHistorico.innerHTML = "<p style='font-size: 13px; color: #888; text-align: center;'>Buscando histórico...</p>";
 
             try {
                 const res = await fetch(`${API_URL}/chamados/lista/${empresa_id}`);
                 const json = await res.json();
                 
-                if(json.status === "SUCESSO") {
-                    if(json.dados.length === 0) {
-                        divHistorico.innerHTML = `<div style="background: var(--cinza-claro); padding: 20px; border-radius: 6px; text-align: center;"><p style="font-size: 14px; color: #888;">Você ainda não possui nenhum chamado aberto.</p></div>`;
+                if (json.status === "SUCESSO") {
+                    if (json.dados.length === 0) {
+                        divHistorico.innerHTML = `<div style="background: var(--cinza-claro); padding: 15px; border-radius: 6px; text-align: center;"><p style="font-size: 13px; color: #888;">Nenhum chamado aberto.</p></div>`;
                         return;
                     }
 
                     divHistorico.innerHTML = "";
                     json.dados.forEach(c => {
-                        let corStatus = c.status === 'ABERTO' ? 'var(--vermelho-erro)' : (c.status === 'EM_ANALISE' ? 'var(--laranja-cta)' : 'var(--verde-sucesso)');
+                        let corStatus = c.status === 'ABERTO' ? 'var(--vermelho-erro)' : (c.status === 'EM_ANALISE' ? 'var(--laranja-cta)' : (c.status === 'CONCLUIDO' ? 'var(--escuro)' : 'var(--verde-sucesso)'));
                         let txtStatus = c.status.replace("_", " ");
-                        let htmlResposta = c.resposta_admin ? `<div style="margin-top: 10px; padding: 10px; background: #e6f4ea; border-left: 3px solid var(--verde-sucesso); border-radius: 4px; font-size: 12px; color: var(--escuro);"><strong>Resposta do Suporte:</strong><br>${c.resposta_admin}</div>` : "";
+                        let dadosBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(c))));
                         
                         divHistorico.innerHTML += `
-                            <div style="background: white; border: 1px solid var(--borda); padding: 15px; border-radius: 6px; margin-bottom: 10px; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div class="ticket-item" onclick="abrirChatCliente('${dadosBase64}')">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                     <strong style="font-size: 13px; color: var(--azul-corp);">#${c.id} - ${c.tipo_chamado.toUpperCase()}</strong>
-                                    <span style="background: ${corStatus}; color: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">${txtStatus}</span>
                                 </div>
-                                <p style="font-size: 11px; color: #999; margin-bottom: 8px;">Aberto em: ${c.data_abertura}</p>
-                                ${htmlResposta}
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="font-size: 10px; color: #999;">${c.data_abertura}</p>
+                                    <span style="background: ${corStatus}; color: white; padding: 2px 6px; border-radius: 12px; font-size: 9px; font-weight: bold;">${txtStatus}</span>
+                                </div>
                             </div>
                         `;
                     });
                 }
-            } catch(e) { divHistorico.innerHTML = "<p style='text-align:center;'>Erro ao carregar histórico.</p>"; }
+            } catch(e) { divHistorico.innerHTML = "<p style='text-align:center;'>Erro ao carregar chamados.</p>"; }
+        }
+
+        function abrirChatCliente(dadosBase64) {
+            let c = JSON.parse(decodeURIComponent(escape(atob(dadosBase64))));
+            
+            document.getElementById('painel-novo-chamado').style.display = 'none';
+            document.getElementById('painel-chat-cliente').style.display = 'block';
+            
+            document.getElementById('chat-cli-titulo').innerText = `Chamado #${c.id} - ${c.tipo_chamado.toUpperCase()}`;
+            document.getElementById('chat-cli-status').innerText = c.status.replace("_", " ");
+            document.getElementById('chat-cli-id').value = c.id;
+            
+            if (c.status === "CONCLUIDO") {
+                document.getElementById('area-resposta-cliente').style.display = 'none';
+            } else {
+                document.getElementById('area-resposta-cliente').style.display = 'block';
+                document.getElementById('chat-cli-nova-msg').value = "";
+            }
+
+            let nome = localStorage.getItem('laenged_empresa_nome') || "Você";
+            let msgs = c.mensagens || [];
+            
+            // Compatibilidade com dados legados
+            if (msgs.length === 0) {
+                msgs.push({ remetente: "CLIENTE", texto: c.descricao, data_envio: c.data_abertura });
+                if (c.resposta_admin) {
+                    msgs.push({ remetente: "ADMIN", texto: c.resposta_admin, data_envio: "Suporte" });
+                }
+            }
+
+            renderizarMensagens(msgs, 'cliente-chat-historico', nome);
         }
 
         async function enviarChamado() {
@@ -543,7 +648,7 @@
             let desc = document.getElementById('desc-chamado').value;
             let empresa_id = localStorage.getItem('laenged_empresa_id');
 
-            if(!tipo || !desc) return alert("Selecione um assunto e descreva o problema.");
+            if (!tipo || !desc) return alert("Selecione um assunto e descreva o problema.");
 
             try {
                 const res = await fetch(`${API_URL}/chamados/novo`, {
@@ -551,15 +656,102 @@
                     body: JSON.stringify({ empresa_id: parseInt(empresa_id), tipo_chamado: tipo, descricao: desc })
                 });
                 const data = await res.json();
-                if(data.status === "SUCESSO") {
+                if (data.status === "SUCESSO") {
                     alert("✅ " + data.mensagem);
-                    document.getElementById('tipo-chamado').value = "";
-                    document.getElementById('desc-chamado').value = "";
                     carregarChamados();
                 } else { alert("❌ Erro: " + data.mensagem); }
             } catch(e) { alert("Falha de conexão com o servidor."); }
         }
 
+        async function enviarMensagemCliente() {
+            let chamado_id = document.getElementById('chat-cli-id').value;
+            let texto = document.getElementById('chat-cli-nova-msg').value.trim();
+            if (!texto) return alert("Digite uma mensagem antes de enviar.");
+
+            try {
+                const res = await fetch(`${API_URL}/chamados/mensagem/cliente`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chamado_id: parseInt(chamado_id), texto: texto })
+                });
+                const data = await res.json();
+                if (data.status === "SUCESSO") {
+                    document.getElementById('chat-cli-nova-msg').value = "";
+                    carregarChamados();
+                } else { alert("❌ Erro: " + data.mensagem); }
+            } catch(e) { alert("Erro de conexão ao enviar mensagem."); }
+        }
+
+        // ================= FLUXO ADMIN =================
+        async function carregarChamadosAdmin() {
+            let divLista = document.getElementById('admin-lista-chamados');
+            try {
+                const res = await fetch(`${API_URL}/admin/chamados/todos`);
+                const json = await res.json();
+                if (json.status === "SUCESSO") {
+                    if (json.dados.length === 0) return divLista.innerHTML = `<p style="text-align:center;">Fila vazia.</p>`;
+                    divLista.innerHTML = "";
+                    json.dados.forEach(c => {
+                        let classBadge = c.status === 'ABERTO' ? 'status-aberto' : (c.status === 'EM_ANALISE' ? 'status-analise' : (c.status === 'CONCLUIDO' ? 'status-expirada' : 'status-respondido'));
+                        let dadosBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(c))));
+                        
+                        divLista.innerHTML += `
+                            <div class="ticket-item" onclick="selecionarChamadoAdmin('${dadosBase64}')">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <strong style="font-size: 14px;">#${c.id} - ${c.empresa}</strong>
+                                    <span class="${classBadge}">${c.status.replace("_", " ")}</span>
+                                </div>
+                                <p style="font-size: 12px; color: #666; margin-top: 5px;">Módulo: ${c.tipo_chamado.toUpperCase()}</p>
+                                <p style="font-size: 11px; color: #999; margin-top: 3px;">Data: ${c.data_abertura}</p>
+                            </div>`;
+                    });
+                }
+            } catch(e) { divLista.innerHTML = "<p>Erro ao carregar fila.</p>"; }
+        }
+
+        function selecionarChamadoAdmin(dadosBase64) {
+            let c = JSON.parse(decodeURIComponent(escape(atob(dadosBase64))));
+            
+            document.getElementById('admin-aviso-selecao').style.display = 'none';
+            document.getElementById('admin-painel-resposta').style.display = 'block';
+            
+            document.getElementById('admin-resp-id').value = c.id;
+            document.getElementById('admin-resp-empresa').innerText = c.empresa;
+            document.getElementById('admin-resp-tipo').innerText = c.tipo_chamado.toUpperCase();
+            document.getElementById('admin-resp-status').value = c.status;
+            document.getElementById('admin-resp-texto').value = "";
+            
+            let msgs = c.mensagens || [];
+            if (msgs.length === 0) {
+                msgs.push({ remetente: "CLIENTE", texto: c.descricao, data_envio: c.data_abertura });
+                if (c.resposta_admin) {
+                    msgs.push({ remetente: "ADMIN", texto: c.resposta_admin, data_envio: "Suporte" });
+                }
+            }
+            renderizarMensagens(msgs, 'admin-chat-historico', c.empresa);
+        }
+
+        async function salvarRespostaAdmin() {
+            let id = document.getElementById('admin-resp-id').value;
+            let status = document.getElementById('admin-resp-status').value;
+            let texto = document.getElementById('admin-resp-texto').value.trim();
+
+            if (!texto && status !== "CONCLUIDO") return alert("Digite uma resposta para enviar.");
+
+            try {
+                const res = await fetch(`${API_URL}/admin/chamados/responder`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chamado_id: parseInt(id), resposta: texto, status: status })
+                });
+                const data = await res.json();
+                if (data.status === "SUCESSO") {
+                    alert("✅ Resposta salva!");
+                    document.getElementById('admin-painel-resposta').style.display = 'none';
+                    document.getElementById('admin-aviso-selecao').style.display = 'block';
+                    carregarChamadosAdmin();
+                } else { alert("❌ Erro: " + data.mensagem); }
+            } catch(e) { alert("Erro de conexão."); }
+        }
+        
         // === API: LOGIN & REGISTRO ===
         async function fazerLogin() {
             const email = document.getElementById('login-email').value.trim();
@@ -609,64 +801,6 @@
                     abrirAdminPanel();
                 } else { alert("❌ " + data.mensagem); }
             } catch (e) { alert("Falha de conexão com o servidor."); } 
-        }
-
-        async function carregarChamadosAdmin() {
-            let divLista = document.getElementById('admin-lista-chamados');
-            try {
-                const res = await fetch(`${API_URL}/admin/chamados/todos`);
-                const json = await res.json();
-                if(json.status === "SUCESSO") {
-                    if(json.dados.length === 0) return divLista.innerHTML = `<p style="text-align:center;">Fila vazia. Tudo tranquilo!</p>`;
-                    divLista.innerHTML = "";
-                    json.dados.forEach(c => {
-                        let classBadge = c.status === 'ABERTO' ? 'status-aberto' : (c.status === 'EM_ANALISE' ? 'status-analise' : 'status-respondido');
-                        let dadosSeguros = btoa(unescape(encodeURIComponent(JSON.stringify(c))));
-                        
-                        divLista.innerHTML += `
-                            <div class="ticket-item" onclick="selecionarChamadoAdmin('${dadosSeguros}')">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <strong style="font-size: 14px;">#${c.id} - ${c.empresa}</strong>
-                                    <span class="${classBadge}">${c.status.replace("_", " ")}</span>
-                                </div>
-                                <p style="font-size: 12px; color: #666; margin-top: 5px;">Módulo: ${c.tipo_chamado.toUpperCase()}</p>
-                                <p style="font-size: 11px; color: #999; margin-top: 3px;">Data: ${c.data_abertura}</p>
-                            </div>`;
-                    });
-                }
-            } catch(e) { divLista.innerHTML = "<p>Erro ao carregar fila.</p>"; }
-        }
-
-        function selecionarChamadoAdmin(dadosBase64) {
-            let c = JSON.parse(decodeURIComponent(escape(atob(dadosBase64))));
-            
-            document.getElementById('admin-aviso-selecao').style.display = 'none';
-            document.getElementById('admin-painel-resposta').style.display = 'block';
-            
-            document.getElementById('admin-resp-id').value = c.id;
-            document.getElementById('admin-resp-empresa').innerText = c.empresa;
-            document.getElementById('admin-resp-tipo').innerText = c.tipo_chamado.toUpperCase();
-            document.getElementById('admin-resp-desc').innerText = c.descricao;
-            document.getElementById('admin-resp-status').value = c.status;
-            document.getElementById('admin-resp-texto').value = c.resposta_admin ? c.resposta_admin : "";
-        }
-
-        async function salvarRespostaAdmin() {
-            let id = document.getElementById('admin-resp-id').value;
-            let status = document.getElementById('admin-resp-status').value;
-            let texto = document.getElementById('admin-resp-texto').value;
-
-            try {
-                const res = await fetch(`${API_URL}/admin/chamados/responder`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chamado_id: parseInt(id), resposta: texto, status: status })
-                });
-                const data = await res.json();
-                if(data.status === "SUCESSO") {
-                    alert("✅ Resposta Salva!");
-                    carregarChamadosAdmin(); 
-                } else alert("❌ Erro: " + data.mensagem);
-            } catch(e) { alert("Erro de conexão."); }
         }
         
         async function fazerRegistro() {

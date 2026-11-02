@@ -63,9 +63,17 @@
         .ticket-item.concluido, .ticket-item.respondido { border-left-color: var(--verde-sucesso); }
 
         /* Painel de Resposta */
-        .detalhe-chamado { background: var(--cinza-claro); padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .detalhe-chamado { background: var(--cinza-claro); padding: 15px; border-radius: 6px; margin-bottom: 15px; }
         .detalhe-chamado p { margin-bottom: 5px; font-size: 13px; color: #555; }
         .detalhe-chamado strong { color: var(--escuro); }
+
+        /* ================= CHAT / BATE-PAPO ================= */
+        .chat-container { display: flex; flex-direction: column; gap: 10px; max-height: 350px; overflow-y: auto; padding: 15px; border: 1px solid var(--borda); background: #fafafa; border-radius: 6px; margin-bottom: 20px;}
+        .msg-balao { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.4; position: relative;}
+        .msg-cliente { background: #e3f2fd; color: #0d47a1; align-self: flex-start; border-bottom-left-radius: 0; }
+        .msg-admin { background: #e8f5e9; color: #1b5e20; align-self: flex-end; border-bottom-right-radius: 0; }
+        .msg-header { font-size: 11px; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 15px;}
+        .msg-data { color: #888; font-weight: normal; }
     </style>
 </head>
 <body>
@@ -123,19 +131,27 @@
                 </div>
 
                 <div id="painel-resposta" style="display: none;">
-                    <div class="detalhe-chamado">
-                        <p>Ticket ID: <strong id="ticket-id" style="font-size: 16px; color: var(--azul-corp);">#000</strong></p>
-                        <p>Empresa: <strong id="ticket-empresa">---</strong></p>
-                        <p>Módulo/Assunto: <strong id="ticket-assunto">---</strong></p>
-                        <p>Abertura: <strong id="ticket-data">---</strong></p>
-                        <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
-                        <p style="font-size: 15px; color: var(--escuro); line-height: 1.5;" id="ticket-descricao">Descrição do problema...</p>
+                    <!-- Cabeçalho do Chamado -->
+                    <div class="detalhe-chamado" style="padding: 10px 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <p style="margin:0;">Ticket ID: <strong id="ticket-id" style="font-size: 15px; color: var(--azul-corp);">#000</strong></p>
+                            <p style="margin:0;">Abertura: <strong id="ticket-data">---</strong></p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                            <p style="margin:0;">Empresa: <strong id="ticket-empresa">---</strong></p>
+                            <p style="margin:0;">Assunto: <strong id="ticket-assunto">---</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- CAIXA DE BATE PAPO (Histórico) -->
+                    <div id="admin-chat-historico" class="chat-container">
+                        <!-- Mensagens renderizadas via JS -->
                     </div>
 
                     <input type="hidden" id="input-id-chamado">
                     
                     <div class="form-group">
-                        <label>Status do Atendimento</label>
+                        <label>Alterar Status do Atendimento</label>
                         <select id="input-status">
                             <option value="ABERTO">🔴 Aberto (Não Iniciado)</option>
                             <option value="EM_ANALISE">🟠 Em Análise (Aguardando Retorno/Dev)</option>
@@ -145,8 +161,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Sua Resposta para o Cliente</label>
-                        <textarea id="input-resposta" rows="8" placeholder="Prezado cliente, informamos que..."></textarea>
+                        <label>Sua Nova Resposta para o Cliente</label>
+                        <textarea id="input-resposta" rows="5" placeholder="Digite sua resposta aqui..."></textarea>
                     </div>
 
                     <button class="btn-auth" id="btn-enviar" onclick="enviarResposta()">📩 Salvar e Enviar Resposta</button>
@@ -193,7 +209,6 @@
                 const data = await res.json();
 
                 if (data.status === "SUCESSO") {
-                    // Guarda as informações de quem está logado
                     localStorage.setItem('laenged_suporte_id', data.id);
                     localStorage.setItem('laenged_suporte_nome', data.nome);
                     abrirPainel();
@@ -236,6 +251,36 @@
             } catch(e) { divLista.innerHTML = "<p>Erro ao carregar fila.</p>"; }
         }
 
+        function renderizarMensagens(mensagens, containerId, nomeCliente) {
+            let container = document.getElementById(containerId);
+            container.innerHTML = "";
+
+            if (!mensagens || mensagens.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#999; font-size:12px; margin-top:10px;'>Nenhuma mensagem encontrada no histórico.</p>";
+                return;
+            }
+
+            mensagens.forEach(m => {
+                let isCliente = m.remetente === "CLIENTE";
+                let classe = isCliente ? "msg-cliente" : "msg-admin";
+                let autor = isCliente ? nomeCliente : "Equipe LAENGED";
+                let data = m.data_envio || "";
+
+                container.innerHTML += `
+                    <div class="msg-balao ${classe}">
+                        <div class="msg-header">
+                            <span>${autor}</span>
+                            <span class="msg-data">${data}</span>
+                        </div>
+                        <div>${(m.texto || "").replace(/\n/g, '<br>')}</div>
+                    </div>
+                `;
+            });
+
+            // Rolagem automática para o fim
+            setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
+        }
+
         function selecionarChamado(dadosBase64) {
             let c = JSON.parse(decodeURIComponent(escape(atob(dadosBase64))));
             
@@ -246,11 +291,23 @@
             document.getElementById('ticket-empresa').innerText = c.empresa;
             document.getElementById('ticket-assunto').innerText = c.tipo_chamado.toUpperCase();
             document.getElementById('ticket-data').innerText = c.data_abertura;
-            document.getElementById('ticket-descricao').innerText = c.descricao;
             
             document.getElementById('input-id-chamado').value = c.id;
             document.getElementById('input-status').value = c.status;
-            document.getElementById('input-resposta').value = c.resposta_admin ? c.resposta_admin : "";
+            document.getElementById('input-resposta').value = ""; // Limpa a textarea para nova mensagem
+            
+            // Renderização do Chat
+            let msgs = c.mensagens || [];
+            
+            // Garantia de compatibilidade com banco legado antigo
+            if (msgs.length === 0) {
+                msgs.push({ remetente: "CLIENTE", texto: c.descricao, data_envio: c.data_abertura });
+                if (c.resposta_admin) {
+                    msgs.push({ remetente: "ADMIN", texto: c.resposta_admin, data_envio: "Suporte" });
+                }
+            }
+
+            renderizarMensagens(msgs, 'admin-chat-historico', c.empresa);
         }
 
         async function enviarResposta() {
@@ -259,7 +316,8 @@
             let texto = document.getElementById('input-resposta').value.trim();
             let atendenteId = localStorage.getItem('laenged_suporte_id');
 
-            if(!texto) return alert("Por favor, digite uma resposta para o cliente.");
+            // Permite alterar o status para CONCLUIDO sem escrever nada, mas obriga texto se for para responder
+            if(!texto && status !== "CONCLUIDO") return alert("Por favor, digite uma resposta para o cliente.");
 
             let btn = document.getElementById('btn-enviar');
             btn.innerText = "Enviando..."; btn.disabled = true;
@@ -271,12 +329,14 @@
                         chamado_id: parseInt(id), 
                         resposta: texto, 
                         status: status,
-                        atendido_por_id: parseInt(atendenteId) // NOVO: Manda quem atendeu!
+                        atendido_por_id: parseInt(atendenteId)
                     })
                 });
                 const data = await res.json();
                 if(data.status === "SUCESSO") {
                     alert("✅ Resposta enviada ao cliente com sucesso!");
+                    document.getElementById('painel-resposta').style.display = 'none';
+                    document.getElementById('painel-vazio').style.display = 'block';
                     carregarFila(); 
                 } else { alert("❌ Erro: " + data.mensagem); }
             } catch(e) { alert("Erro de conexão."); }
