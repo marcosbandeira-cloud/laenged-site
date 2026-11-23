@@ -301,7 +301,7 @@
                             </select>
                         </div>
                         <label style="font-weight: bold; font-size: 14px;">Quantidade de Licenças:</label>
-                        <input type="number" id="qtd-licencas" class="qtd-input" value="1" min="1" max="100" onchange="limitarCheckboxes(null)" onkeyup="limitarCheckboxes(null)">
+                        <input type="number" id="qtd-licencas" class="qtd-input" value="1" min="1" max="100" onchange="limitarCheckboxes(null)" onkeyup="limitarCheckboxes(null)" onblur="if(this.value===''){this.value=1; limitarCheckboxes(null);}">
                         
                         <div class="cupom-area">
                             <input type="text" id="input-cupom" class="cupom-input" placeholder="CUPOM">
@@ -1002,21 +1002,32 @@
         }
 
         function limitarCheckboxes(chkClicado) {
-            let inputQtd = document.getElementById('qtd-licencas');
-            let qtdMax = parseInt(inputQtd.value);
-            if (isNaN(qtdMax) || qtdMax < 1) { qtdMax = 1; inputQtd.value = 1; }
+    let inputQtd = document.getElementById('qtd-licencas');
+    
+    // Se o usuário apenas apagou para digitar outro número, paramos a verificação
+    // para não forçar o "1" na tela e travar a digitação.
+    if (inputQtd.value === "") {
+        calcularPreco(); // Recalcula assumindo o valor base para não quebrar a tela
+        return; 
+    }
 
-            let marcados = document.querySelectorAll('.chk-renovar:checked');
-            if (marcados.length > qtdMax) {
-                if (chkClicado) {
-                    alert(`Você definiu a compra de apenas ${qtdMax} licença(s). Para selecionar mais, aumente a quantidade primeiro.`);
-                    chkClicado.checked = false;
-                } else {
-                    for (let i = qtdMax; i < marcados.length; i++) marcados[i].checked = false;
-                }
-            }
-            calcularPreco(); 
+    let qtdMax = parseInt(inputQtd.value);
+    if (isNaN(qtdMax) || qtdMax < 1) { 
+        qtdMax = 1; 
+        inputQtd.value = 1; 
+    }
+
+    let marcados = document.querySelectorAll('.chk-renovar:checked');
+    if (marcados.length > qtdMax) {
+        if (chkClicado) {
+            alert(`Você definiu a compra de apenas ${qtdMax} licença(s). Para selecionar mais, aumente a quantidade primeiro.`);
+            chkClicado.checked = false;
+        } else {
+            for (let i = qtdMax; i < marcados.length; i++) marcados[i].checked = false;
         }
+    }
+    calcularPreco(); 
+}
 
         async function carregarPrecoDoBanco() {
             try {
